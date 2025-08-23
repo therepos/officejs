@@ -107,12 +107,12 @@
       <!-- You can use resources across hosts and form factors. -->
       <Resources>
         <bt:Images>
-          <bt:Image id="icon16" DefaultValue="https://contoso.com/assets/icon16.png"/>
-          <bt:Image id="icon32" DefaultValue="https://contoso.com/assets/icon32.png"/>
-          <bt:Image id="icon80" DefaultValue="https://contoso.com/assets/icon80.png"/>
+          <bt:Image id="icon16" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-16.png"/>
+          <bt:Image id="icon32" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-32.png"/>
+          <bt:Image id="icon80" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
         </bt:Images>
         <bt:Urls>
-          <bt:Url id="functionFile" DefaultValue="https://contoso.com/FunctionFile.html"/>
+          <bt:Url id="functionFile" DefaultValue="https://therepos.github.io/officejs/src/outlook/formatTables.html?v=4"/>
           <bt:Url id="messageReadTaskPaneUrl" DefaultValue="https://contoso.com/MessageRead.html"/>
         </bt:Urls>
         <bt:ShortStrings>
