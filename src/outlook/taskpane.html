@@ -2,53 +2,104 @@
 <meta charset="utf-8">
 <title>OfficeJS Tools</title>
 <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+
 <body style="font:14px Segoe UI; padding:12px; line-height:1.4">
-  <h3 style="margin:0 0 10px">OfficeJS Tools</h3>
-  <button id="btnFormat"  style="margin:4px 0">Format tables (1pt grey, 0.1in)</button><br>
-  <button id="btnWebdings" style="margin:4px 0">Set all text to Webdings (test)</button><br>
-  <button id="btnReset"   style="margin:4px 0">Reset fonts to Segoe UI</button>
-  <div id="status" style="margin-top:10px;color:#666"></div>
+    <h3 style="margin:0 0 10px">OfficeJS Tools</h3>
+    <button id="btnFormat" style="margin:4px 0">Format tables (1pt grey, 0.1in)</button><br>
+    <button id="btnWebdings" style="margin:4px 0">Set all text to Webdings (test)</button><br>
+    <button id="btnReset" style="margin:4px 0">Reset fonts to Segoe UI</button>
+    <button id="btnImg60" style="margin:4px 0">Resize all images to 60%</button>
+    <div id="status" style="margin-top:10px;color:#666"></div>
 
-<script>
-Office.onReady(() => {
-  const status = (m)=>document.getElementById('status').textContent=m;
+    <script>
+        Office.onReady(() => {
+            const status = (m) => document.getElementById('status').textContent = m;
 
-  function getHtml(){return new Promise(r=>{
-    Office.context.mailbox.item.body.getAsync(Office.CoercionType.Html, x=>r(x.value||""));
-  });}
-  function setHtml(h){return new Promise(r=>{
-    Office.context.mailbox.item.body.setAsync(h,{coercionType:Office.CoercionType.Html},()=>r());
-  });}
+            function getHtml() {
+                return new Promise(r => {
+                    Office.context.mailbox.item.body.getAsync(Office.CoercionType.Html, x => r(x.value || ""));
+                });
+            }
+            function setHtml(h) {
+                return new Promise(r => {
+                    Office.context.mailbox.item.body.setAsync(h, { coercionType: Office.CoercionType.Html }, () => r());
+                });
+            }
 
-  async function formatTables(){
-    status("Formatting tables…");
-    const html = await getHtml(), div=document.createElement('div'); div.innerHTML=html;
-    const border='1pt solid #d9d9d9', pad='0.1in';
-    div.querySelectorAll('table').forEach(t=>{
-      t.style.borderCollapse='collapse';
-      t.style.border=border;
-      t.querySelectorAll('th,td').forEach(c=>{ c.style.border=border; c.style.padding=pad; });
-    });
-    await setHtml(div.innerHTML); status("Tables formatted ✓");
-  }
-  async function webdings(){
-    status("Setting Webdings…");
-    const html = await getHtml(), div=document.createElement('div'); div.innerHTML=html;
-    div.querySelectorAll('p,div,span,td,th,li,h1,h2,h3,h4,h5,h6')
-      .forEach(el=>el.style.fontFamily='Webdings');
-    await setHtml(div.innerHTML); status("Webdings applied ✓");
-  }
-  async function resetFonts(){
-    status("Resetting fonts…");
-    const html = await getHtml(), div=document.createElement('div'); div.innerHTML=html;
-    div.querySelectorAll('p,div,span,td,th,li,h1,h2,h3,h4,h5,h6')
-      .forEach(el=>el.style.fontFamily='Segoe UI, Arial, sans-serif');
-    await setHtml(div.innerHTML); status("Fonts reset ✓");
-  }
+            async function formatTables() {
+                status("Formatting tables…");
+                const html = await getHtml(), div = document.createElement('div'); div.innerHTML = html;
+                const border = '1pt solid #d9d9d9', pad = '0.1in';
+                div.querySelectorAll('table').forEach(t => {
+                    t.style.borderCollapse = 'collapse';
+                    t.style.border = border;
+                    t.querySelectorAll('th,td').forEach(c => { c.style.border = border; c.style.padding = pad; });
+                });
+                await setHtml(div.innerHTML); status("Tables formatted ✓");
+            }
+            async function webdings() {
+                status("Setting Webdings…");
+                const html = await getHtml(), div = document.createElement('div'); div.innerHTML = html;
+                div.querySelectorAll('p,div,span,td,th,li,h1,h2,h3,h4,h5,h6')
+                    .forEach(el => el.style.fontFamily = 'Webdings');
+                await setHtml(div.innerHTML); status("Webdings applied ✓");
+            }
+            async function resetFonts() {
+                status("Resetting fonts…");
+                const html = await getHtml(), div = document.createElement('div'); div.innerHTML = html;
+                div.querySelectorAll('p,div,span,td,th,li,h1,h2,h3,h4,h5,h6')
+                    .forEach(el => el.style.fontFamily = 'Segoe UI, Arial, sans-serif');
+                await setHtml(div.innerHTML); status("Fonts reset ✓");
+            }
 
-  document.getElementById('btnFormat').onclick = formatTables;
-  document.getElementById('btnWebdings').onclick = webdings;
-  document.getElementById('btnReset').onclick = resetFonts;
-});
-</script>
+            async function resizeImages60() {
+                status("Resizing images to 60%…");
+                const html = await getHtml();
+                const div = document.createElement('div'); div.innerHTML = html;
+
+                const scale = 0.6;
+
+                div.querySelectorAll('img').forEach(img => {
+                    // Try width from style or attribute (px), else fallback to percent
+                    const styleW = (img.style && img.style.width || '').trim();
+                    const attrW = (img.getAttribute('width') || '').trim();
+                    const styleH = (img.style && img.style.height || '').trim();
+                    const attrH = (img.getAttribute('height') || '').trim();
+
+                    const px = v => (/^\d+(\.\d+)?px$/i.test(v)) ? parseFloat(v) : null;
+                    const int = v => (/^\d+$/i.test(v)) ? parseInt(v, 10) : null;
+
+                    let w = px(styleW) ?? int(attrW);
+                    let h = px(styleH) ?? int(attrH);
+
+                    if (w) {
+                        const w2 = Math.max(1, Math.round(w * scale));
+                        img.style.width = w2 + 'px';
+                        img.removeAttribute('width');
+                        if (h) {
+                            const h2 = Math.max(1, Math.round(h * scale));
+                            img.style.height = h2 + 'px';
+                            img.removeAttribute('height');
+                        } else {
+                            img.style.height = 'auto';
+                        }
+                    } else {
+                        // No measurable width → scale relative to container
+                        img.style.width = '60%';
+                        img.style.height = 'auto';
+                    }
+                    // keep layout tight
+                    img.style.maxWidth = '100%';
+                });
+
+                await setHtml(div.innerHTML);
+                status("Images resized ✓");
+            }
+
+            document.getElementById('btnImg60').onclick = resizeImages60;
+            document.getElementById('btnFormat').onclick = formatTables;
+            document.getElementById('btnWebdings').onclick = webdings;
+            document.getElementById('btnReset').onclick = resetFonts;
+        });
+    </script>
 </body>

@@ -16,7 +16,8 @@ officejs/
 ├── manifest.xml
 ├── src/
 │   ├── outlook/
-│   │   └── formatTables.html
+│   │   └── blank.html        ← schema requires this stub
+│   │   └── taskpane.html     ← all features + UI
 │   └── shared/
 │       └── utils.js
 ├── assets/
@@ -25,6 +26,7 @@ officejs/
 │       ├── icon-32.png
 │       └── icon-80.png
 └── README.md
+
 ```
 
 ## Notes
