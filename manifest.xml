@@ -29,7 +29,6 @@
     </Sets>
   </Requirements>
 
-  <!-- Required by schema (ignored when VersionOverrides present) -->
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
@@ -41,12 +40,10 @@
 
   <Permissions>ReadWriteItem</Permissions>
 
-  <!-- Required by schema (ignored when VersionOverrides present) -->
   <Rule xsi:type="RuleCollection" Mode="Or">
     <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
   </Rule>
 
-  <!-- Microsoft tutorial pattern: 1.0 wrapper with inner 1.1 -->
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
     <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1" xsi:type="VersionOverridesV1_1">
 
@@ -59,7 +56,7 @@
       <Hosts>
         <Host xsi:type="MailHost">
           <DesktopFormFactor>
-            <!-- FunctionFile is required; we point it to the pane too -->
+            <!-- FunctionFile goes HERE (not inside bt:Urls) -->
             <FunctionFile resid="taskPaneUrl"/>
 
             <ExtensionPoint xsi:type="MessageComposeCommandSurface">
@@ -96,9 +93,8 @@
           <bt:Image id="icon80" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
         </bt:Images>
         <bt:Urls>
-          <!-- Both point to your pane UI with cache-buster -->
+          <!-- ONLY bt:Url elements live here -->
           <bt:Url id="taskPaneUrl" DefaultValue="https://therepos.github.io/officejs/src/outlook/taskpane.html?v=18"/>
-          <FunctionFile resid="taskPaneUrl"/>
         </bt:Urls>
         <bt:ShortStrings>
           <bt:String id="grpLabel" DefaultValue="Tools"/>
