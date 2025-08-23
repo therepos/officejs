@@ -93,8 +93,8 @@
           <bt:Image id="icon80" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
         </bt:Images>
         <bt:Urls>
-          <bt:Url id="functionFile" DefaultValue="https://therepos.github.io/officejs/src/outlook/formatTables.html?v=14"/>
-          <bt:Url id="taskPaneUrl"  DefaultValue="https://therepos.github.io/officejs/src/outlook/taskpane.html?v=14"/>
+          <bt:Url id="functionFile" DefaultValue="https://therepos.github.io/officejs/src/outlook/formatTables.html?v=16"/>
+          <bt:Url id="taskPaneUrl"  DefaultValue="https://therepos.github.io/officejs/src/outlook/formatTables.html?v=16"/>
         </bt:Urls>
         <bt:ShortStrings>
           <bt:String id="grpLabel" DefaultValue="Tools"/>
