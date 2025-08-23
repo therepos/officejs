@@ -5,7 +5,7 @@
            xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0"
            xsi:type="MailApp">
 
-  <!-- Unique ID for your add-in -->
+  <!-- Keep this GUID stable (replace if you want a new identity) -->
   <Id>7f1a9b06-1d1c-4f3a-9a6d-6a3c8f2a4b0e</Id>
   <Version>1.0.0.0</Version>
   <ProviderName>therepos</ProviderName>
@@ -48,7 +48,7 @@
     <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
   </Rule>
 
-  <!-- Microsoft tutorial pattern: outer 1.0 + inner 1.1 -->
+  <!-- Microsoft tutorial style: outer 1.0 wrapping inner 1.1 -->
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
     <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1" xsi:type="VersionOverridesV1_1">
 
@@ -61,10 +61,10 @@
       <Hosts>
         <Host xsi:type="MailHost">
           <DesktopFormFactor>
-            <!-- Function file with global window.formatTables -->
+            <!-- Global function lives here -->
             <FunctionFile resid="functionFile"/>
 
-            <!-- Compose ribbon command (TabDefault) -->
+            <!-- Compose button on default tab -->
             <ExtensionPoint xsi:type="MessageComposeCommandSurface">
               <OfficeTab id="TabDefault">
                 <Group id="grp1">
@@ -99,8 +99,8 @@
           <bt:Image id="icon80" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
         </bt:Images>
         <bt:Urls>
-          <!-- bump v= to bust cache after edits -->
-          <bt:Url id="functionFile" DefaultValue="https://therepos.github.io/officejs/src/outlook/formatTables.html?v=9"/>
+          <!-- bump the version to bust cache after edits -->
+          <bt:Url id="functionFile" DefaultValue="https://therepos.github.io/officejs/src/outlook/formatTables.html?v=12"/>
         </bt:Urls>
         <bt:ShortStrings>
           <bt:String id="grpLabel" DefaultValue="Tools"/>
