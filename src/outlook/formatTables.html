@@ -1,27 +1,58 @@
 <!doctype html>
-<meta charset="utf-8">
-<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
-<script>
-(function () {
-  // Reuse the same command name
-  window.formatTables = function (event) {
-    Office.context.mailbox.item.body.getAsync(Office.CoercionType.Html, function (res) {
-      if (res.status !== Office.AsyncResultStatus.Succeeded) { event.completed(); return; }
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>OfficeJS Tools</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <script>
+    Office.onReady(() => {
+      // must be global for the command button
+      window.formatTables = function (event) {
+        try {
+          // show a toast
+          if (Office.context.mailbox.item && Office.context.mailbox.item.notificationMessages) {
+            Office.context.mailbox.item.notificationMessages.replaceAsync("fmtStatus", {
+              type: Office.NotificationMessageType.InformationalMessage,
+              message: "Changing fonts to Webdings…",
+              icon: "icon16",
+              persistent: false
+            });
+          }
 
-      var wrap = document.createElement("div");
-      wrap.innerHTML = res.value;
+          // grab body HTML
+          Office.context.mailbox.item.body.getAsync(Office.CoercionType.Html, function (res) {
+            if (res.status !== Office.AsyncResultStatus.Succeeded) { event.completed(); return; }
 
-      // Set Webdings on common text containers + table cells
-      wrap.querySelectorAll("p, div, span, td, th, li, h1, h2, h3, h4, h5, h6").forEach(function(el){
-        el.style.fontFamily = "Webdings";   // super obvious change
-      });
+            var wrap = document.createElement("div");
+            wrap.innerHTML = res.value;
 
-      Office.context.mailbox.item.body.setAsync(
-        wrap.innerHTML,
-        { coercionType: Office.CoercionType.Html },
-        function () { event.completed(); }
-      );
+            // apply Webdings font everywhere
+            wrap.querySelectorAll("p, div, span, td, th, li, h1, h2, h3, h4, h5, h6").forEach(el => {
+              el.style.fontFamily = "Webdings";
+            });
+
+            Office.context.mailbox.item.body.setAsync(
+              wrap.innerHTML,
+              { coercionType: Office.CoercionType.Html },
+              function () {
+                // success toast
+                Office.context.mailbox.item.notificationMessages.replaceAsync("fmtStatus", {
+                  type: Office.NotificationMessageType.InformationalMessage,
+                  message: "Fonts changed to Webdings ✓",
+                  icon: "icon16",
+                  persistent: false
+                });
+                event.completed();
+              }
+            );
+          });
+        } catch (e) {
+          event.completed();
+        }
+      };
     });
-  };
-})();
-</script>
+  </script>
+</head>
+<body>
+</body>
+</html>
