@@ -10,7 +10,7 @@
   <ProviderName>therepos</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="OfficeJS Tools"/>
-  <Description DefaultValue="Outlook add-in with a Format Tables task pane."/>
+  <Description DefaultValue="Outlook add-in with formatting tools."/>
   <IconUrl DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
   <SupportUrl DefaultValue="https://therepos.github.io/officejs/"/>
@@ -29,6 +29,7 @@
     </Sets>
   </Requirements>
 
+  <!-- Required by schema (ignored when VersionOverrides present) -->
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
@@ -40,6 +41,7 @@
 
   <Permissions>ReadWriteItem</Permissions>
 
+  <!-- Required by schema (ignored when VersionOverrides present) -->
   <Rule xsi:type="RuleCollection" Mode="Or">
     <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
   </Rule>
@@ -56,7 +58,6 @@
       <Hosts>
         <Host xsi:type="MailHost">
           <DesktopFormFactor>
-            <!-- FunctionFile goes HERE (not inside bt:Urls) -->
             <FunctionFile resid="taskPaneUrl"/>
 
             <ExtensionPoint xsi:type="MessageComposeCommandSurface">
@@ -93,15 +94,14 @@
           <bt:Image id="icon80" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
         </bt:Images>
         <bt:Urls>
-          <!-- ONLY bt:Url elements live here -->
-          <bt:Url id="taskPaneUrl" DefaultValue="https://therepos.github.io/officejs/src/outlook/taskpane.html?v=18"/>
+          <bt:Url id="taskPaneUrl" DefaultValue="https://therepos.github.io/officejs/src/outlook/taskpane.html?v=20"/>
         </bt:Urls>
         <bt:ShortStrings>
           <bt:String id="grpLabel" DefaultValue="Tools"/>
-          <bt:String id="btnLabel" DefaultValue="Format Tables"/>
+          <bt:String id="btnLabel" DefaultValue="OfficeJS Tools"/>
         </bt:ShortStrings>
         <bt:LongStrings>
-          <bt:String id="btnDesc" DefaultValue="Open task pane with formatting tools."/>
+          <bt:String id="btnDesc" DefaultValue="Open the task pane with formatting tools."/>
         </bt:LongStrings>
       </Resources>
 
