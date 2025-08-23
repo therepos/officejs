@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Outlook Functions</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <script src="../shared/utils.js"></script>
+</head>
+<body>
+<script>
+(function() {
+  // Outlook command: Format Tables
+  window.formatTables = function (event) {
+    try {
+      Office.context.mailbox.item.body.getAsync(Office.CoercionType.Html, function (r) {
+        if (r.status !== Office.AsyncResultStatus.Succeeded) { event.completed(); return; }
+        var wrap = document.createElement('div');
+        wrap.innerHTML = r.value;
+
+        var borderCss = '1pt solid #d9d9d9'; // light grey
+        var pad = '0.1in';
+
+        wrap.querySelectorAll('table').forEach(function(t) {
+          t.style.borderCollapse = 'collapse';
+          t.style.border = borderCss; // optional outer border
+          t.querySelectorAll('th, td').forEach(function(c) {
+            c.style.border = borderCss;
+            c.style.paddingTop = pad;
+            c.style.paddingRight = pad;
+            c.style.paddingBottom = pad;
+            c.style.paddingLeft = pad;
+          });
+        });
+
+        Office.context.mailbox.item.body.setAsync(
+          wrap.innerHTML,
+          { coercionType: Office.CoercionType.Html },
+          function () { event.completed(); }
+        );
+      });
+    } catch(e) {
+      if (event && typeof event.completed === "function") event.completed();
+    }
+  };
+})();
+</script>
+</body>
+</html>

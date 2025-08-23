@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+           xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.1"
+           xsi:type="MailApp">
+  <Id>PUT-YOUR-UUID-HERE</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>Your Org</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="OfficeJS Tools"/>
+  <Description DefaultValue="A general Office.js add-in. Includes an Outlook button to format tables."/>
+  <IconUrl DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
+  <SupportUrl DefaultValue="https://therepos.github.io/officejs/"/>
+  <AppDomains>
+    <AppDomain>https://therepos.github.io</AppDomain>
+  </AppDomains>
+  <Hosts>
+    <Host Name="Mailbox"/>
+    <!-- Add more later: <Host Name="Document"/>, <Host Name="Workbook"/> -->
+  </Hosts>
+  <Requirements>
+    <Sets DefaultMinVersion="1.10">
+      <Set Name="Mailbox"/>
+    </Sets>
+  </Requirements>
+  <Permissions>ReadWriteItem</Permissions>
+
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1" xsi:type="VersionOverridesV1_1">
+    <Requirements>
+      <bt:Sets DefaultMinVersion="1.10">
+        <bt:Set Name="Mailbox"/>
+      </bt:Sets>
+    </Requirements>
+    <Hosts>
+      <Host Name="Mailbox">
+        <ExtensionPoint xsi:type="MessageComposeCommandSurface">
+          <OfficeTab id="TabDefault">
+            <Group id="grpOutlook" label="Outlook Tools">
+              <Control xsi:type="Button" id="btnFormatTables">
+                <Label resid="outlookLabel"/>
+                <Supertip>
+                  <Title resid="outlookLabel"/>
+                  <Description resid="outlookDesc"/>
+                </Supertip>
+                <Icon>
+                  <bt:Image size="16" resid="outlookIcon16"/>
+                  <bt:Image size="32" resid="outlookIcon32"/>
+                  <bt:Image size="80" resid="outlookIcon80"/>
+                </Icon>
+                <Action xsi:type="ExecuteFunction">
+                  <FunctionName>formatTables</FunctionName>
+                </Action>
+              </Control>
+            </Group>
+          </OfficeTab>
+        </ExtensionPoint>
+      </Host>
+    </Hosts>
+    <Resources>
+      <bt:Images>
+        <bt:Image id="outlookIcon16" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-16.png"/>
+        <bt:Image id="outlookIcon32" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-32.png"/>
+        <bt:Image id="outlookIcon80" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="outlookFunctions" DefaultValue="https://therepos.github.io/officejs/src/outlook/formatTables.html"/>
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="outlookLabel" DefaultValue="Format Tables"/>
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="outlookDesc" DefaultValue="Apply 1pt light-grey borders and 0.1in padding to all tables in the message."/>
+      </bt:LongStrings>
+    </Resources>
+    <WebApplicationInfo>
+      <Id>00000000-0000-0000-0000-000000000000</Id>
+      <Resource>https://therepos.github.io/officejs</Resource>
+      <Scopes/>
+    </WebApplicationInfo>
+  </VersionOverrides>
+</OfficeApp>
