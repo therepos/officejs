@@ -2,9 +2,10 @@
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
-  xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides"
+  xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.1"
   xsi:type="MailApp">
 
+  <!-- Stable unique ID (GUID) -->
   <Id>7f1a9b06-1d1c-4f3a-9a6d-6a3c8f2a4b0e</Id>
   <Version>1.0.0.0</Version>
   <ProviderName>Your Org</ProviderName>
@@ -29,7 +30,7 @@
     </Sets>
   </Requirements>
 
-  <!-- FormSettings must precede Permissions -->
+  <!-- Forms must come before Permissions -->
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
@@ -46,15 +47,15 @@
 
   <Permissions>ReadWriteItem</Permissions>
 
-  <!-- Root Rule must appear before VersionOverrides -->
+  <!-- Root activation rule must be present before VersionOverrides -->
   <Rule xsi:type="RuleCollection" Mode="Or">
     <Rule xsi:type="ItemIs" ItemType="Message" FormType="Edit"/>
   </Rule>
 
   <DisableEntityHighlighting>false</DisableEntityHighlighting>
 
-  <!-- IMPORTANT: use the mailappor: prefix (no /1.1 in the ns) -->
-  <mailappor:VersionOverrides xsi:type="VersionOverridesV1_1">
+  <!-- Commands (ribbon button) -->
+  <mailappor:VersionOverrides xsi:type="mailappor:VersionOverridesV1_1">
     <Requirements>
       <bt:Sets DefaultMinVersion="1.10">
         <bt:Set Name="Mailbox"/>
@@ -87,7 +88,7 @@
       </Host>
     </Hosts>
 
-    <!-- Link the command to your function file -->
+    <!-- Map command to function file -->
     <FunctionFile resid="outlookFunctions"/>
 
     <Resources>
@@ -96,9 +97,11 @@
         <bt:Image id="outlookIcon32" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-32.png"/>
         <bt:Image id="outlookIcon80" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
       </bt:Images>
+
       <bt:Urls>
         <bt:Url id="outlookFunctions" DefaultValue="https://therepos.github.io/officejs/src/outlook/formatTables.html"/>
       </bt:Urls>
+
       <bt:ShortStrings>
         <bt:String id="outlookLabel" DefaultValue="Format Tables"/>
       </bt:ShortStrings>
