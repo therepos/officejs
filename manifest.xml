@@ -29,7 +29,6 @@
     </Sets>
   </Requirements>
 
-  <!-- Forms (schema requires this block before Permissions) -->
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
@@ -46,15 +45,13 @@
 
   <Permissions>ReadWriteItem</Permissions>
 
-  <!-- NEW: minimal activation rule so the root schema is satisfied -->
   <Rule xsi:type="RuleCollection" Mode="Or">
     <Rule xsi:type="ItemIs" ItemType="Message" FormType="Edit"/>
   </Rule>
 
   <DisableEntityHighlighting>false</DisableEntityHighlighting>
 
-  <!-- Commands live in VersionOverrides -->
-  <VersionOverrides xsi:type="VersionOverridesV1_1">
+  <mailappor:VersionOverrides xsi:type="VersionOverridesV1_1">
     <Requirements>
       <bt:Sets DefaultMinVersion="1.10">
         <bt:Set Name="Mailbox"/>
@@ -105,5 +102,5 @@
         <bt:String id="outlookDesc" DefaultValue="Apply 1pt light-grey borders and 0.1in padding to all tables."/>
       </bt:LongStrings>
     </Resources>
-  </VersionOverrides>
+  </mailappor:VersionOverrides>
 </OfficeApp>
