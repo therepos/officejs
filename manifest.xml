@@ -4,7 +4,7 @@
   <!-- Begin basic settings: Add-in metadata used for all versions of Outlook, unless override provided. -->
 
   <!-- IMPORTANT: The ID must be unique to your add-in. If you reuse this manifest, ensure that you change this to a new GUID. -->
-  <Id>971E76EF-D73E-567F-ADAE-5A76B39052C8</Id>
+  <Id>7f1a9b06-1d1c-4f3a-9a6d-6a3c8f2a4b0e</Id>
   <!-- Updates from the Office Store only get triggered if there is a version change. -->
   <Version>1.0.0.0</Version>
   <ProviderName>Contoso</ProviderName>
