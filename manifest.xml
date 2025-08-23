@@ -5,7 +5,7 @@
            xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0"
            xsi:type="MailApp">
 
-  <!-- Unique GUID for your add-in -->
+  <!-- Unique ID for your add-in -->
   <Id>7f1a9b06-1d1c-4f3a-9a6d-6a3c8f2a4b0e</Id>
   <Version>1.0.0.0</Version>
   <ProviderName>therepos</ProviderName>
@@ -31,7 +31,7 @@
     </Sets>
   </Requirements>
 
-  <!-- Required for validation when VersionOverrides present -->
+  <!-- Required by schema when VersionOverrides present -->
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
@@ -43,13 +43,12 @@
 
   <Permissions>ReadWriteItem</Permissions>
 
-  <!-- Required for validation when VersionOverrides present -->
+  <!-- Required by schema when VersionOverrides present -->
   <Rule xsi:type="RuleCollection" Mode="Or">
-    <!-- We target compose; this rule is ignored once VersionOverrides loads -->
-    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Edit"/>
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
   </Rule>
 
-  <!-- Follow MS example: outer 1.0 + inner 1.1 -->
+  <!-- Follow Microsoft example: VersionOverrides 1.0 wrapping 1.1 -->
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
     <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1" xsi:type="VersionOverridesV1_1">
       <Requirements>
@@ -61,12 +60,12 @@
       <Hosts>
         <Host xsi:type="MailHost">
           <DesktopFormFactor>
-            <!-- Where the command function is defined -->
+            <!-- Function file that defines formatTables() -->
             <FunctionFile resid="functionFile"/>
 
-            <!-- Compose ribbon surface -->
+            <!-- Compose surface with a CUSTOM TAB so it's visible -->
             <ExtensionPoint xsi:type="MessageComposeCommandSurface">
-              <OfficeTab id="TabDefault">
+              <CustomTab id="officeJsTab" label="OfficeJS">
                 <Group id="msgComposeGroup">
                   <Label resid="groupLabel"/>
                   <Control xsi:type="Button" id="composeFormatTablesBtn">
@@ -85,7 +84,7 @@
                     </Action>
                   </Control>
                 </Group>
-              </OfficeTab>
+              </CustomTab>
             </ExtensionPoint>
           </DesktopFormFactor>
         </Host>
@@ -99,10 +98,11 @@
           <bt:Image id="icon80" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
         </bt:Images>
         <bt:Urls>
-          <bt:Url id="functionFile" DefaultValue="https://therepos.github.io/officejs/src/outlook/formatTables.html?v=5"/>
+          <!-- add ?v=7 to bust cache if needed -->
+          <bt:Url id="functionFile" DefaultValue="https://therepos.github.io/officejs/src/outlook/formatTables.html?v=7"/>
         </bt:Urls>
         <bt:ShortStrings>
-          <bt:String id="groupLabel" DefaultValue="Outlook Tools"/>
+          <bt:String id="groupLabel" DefaultValue="Tools"/>
           <bt:String id="actionButtonLabel" DefaultValue="Format Tables"/>
         </bt:ShortStrings>
         <bt:LongStrings>
