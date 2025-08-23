@@ -1,12 +1,75 @@
-<!doctype html><meta charset="utf-8">
+<!doctype html>
+<meta charset="utf-8">
+<title>OfficeJS Tools</title>
 <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+<body style="font:14px Segoe UI; padding:12px; line-height:1.4">
+  <h3 style="margin:0 0 10px">OfficeJS Tools</h3>
+  <button id="btnFormat"  style="margin:4px 0">Format tables (1pt grey, 0.1in)</button><br>
+  <button id="btnWebdings" style="margin:4px 0">Set all text to Webdings (test)</button><br>
+  <button id="btnReset"   style="margin:4px 0">Reset fonts to Segoe UI</button>
+
+  <div id="status" style="margin-top:10px;color:#666"></div>
+
 <script>
-Office.onReady(()=>{
-  if (window.formatTables) {
-    window.formatTables({completed:()=>{}});
+Office.onReady(() => {
+  const status = (msg) => document.getElementById("status").textContent = msg;
+
+  async function getBodyHtml() {
+    return new Promise(res => {
+      Office.context.mailbox.item.body.getAsync(Office.CoercionType.Html, r => res(r.value || ""));
+    });
   }
+  async function setBodyHtml(html) {
+    return new Promise(res => {
+      Office.context.mailbox.item.body.setAsync(html, {coercionType:Office.CoercionType.Html}, () => res());
+    });
+  }
+
+  async function formatTables() {
+    status("Formatting tables…");
+    const html = await getBodyHtml();
+    const wrap = document.createElement("div"); wrap.innerHTML = html;
+
+    const border = "1pt solid #d9d9d9";
+    const pad    = "0.1in";
+
+    wrap.querySelectorAll("table").forEach(t => {
+      t.style.borderCollapse = "collapse";
+      t.style.border = border; // optional outer border
+      t.querySelectorAll("th,td").forEach(c => {
+        c.style.border  = border;
+        c.style.padding = pad;
+      });
+    });
+
+    await setBodyHtml(wrap.innerHTML);
+    status("Tables formatted ✓");
+  }
+
+  async function setWebdings() {
+    status("Setting Webdings…");
+    const html = await getBodyHtml();
+    const wrap = document.createElement("div"); wrap.innerHTML = html;
+    wrap.querySelectorAll("p,div,span,td,th,li,h1,h2,h3,h4,h5,h6")
+        .forEach(el => el.style.fontFamily = "Webdings");
+    await setBodyHtml(wrap.innerHTML);
+    status("Webdings applied ✓");
+  }
+
+  async function resetFonts() {
+    status("Resetting fonts to Segoe UI…");
+    const html = await getBodyHtml();
+    const wrap = document.createElement("div"); wrap.innerHTML = html;
+    wrap.querySelectorAll("p,div,span,td,th,li,h1,h2,h3,h4,h5,h6")
+        .forEach(el => el.style.fontFamily = "Segoe UI, Arial, sans-serif");
+    await setBodyHtml(wrap.innerHTML);
+    status("Fonts reset ✓");
+  }
+
+  // wire buttons
+  document.getElementById("btnFormat").onclick  = formatTables;
+  document.getElementById("btnWebdings").onclick = setWebdings;   // demo
+  document.getElementById("btnReset").onclick   = resetFonts;
 });
 </script>
-<body style="font:14px Segoe UI;padding:10px">
-  Running “Format Tables”… You can close or pin this pane.
 </body>

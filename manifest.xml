@@ -10,7 +10,7 @@
   <ProviderName>therepos</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="OfficeJS Tools"/>
-  <Description DefaultValue="Outlook add-in with a Format Tables button."/>
+  <Description DefaultValue="Outlook add-in with a Format Tables task pane."/>
   <IconUrl DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
   <SupportUrl DefaultValue="https://therepos.github.io/officejs/"/>
@@ -29,6 +29,7 @@
     </Sets>
   </Requirements>
 
+  <!-- Required by schema (ignored when VersionOverrides present) -->
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
@@ -40,10 +41,12 @@
 
   <Permissions>ReadWriteItem</Permissions>
 
+  <!-- Required by schema (ignored when VersionOverrides present) -->
   <Rule xsi:type="RuleCollection" Mode="Or">
     <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
   </Rule>
 
+  <!-- Microsoft tutorial pattern: 1.0 wrapper with inner 1.1 -->
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
     <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1" xsi:type="VersionOverridesV1_1">
 
@@ -56,7 +59,8 @@
       <Hosts>
         <Host xsi:type="MailHost">
           <DesktopFormFactor>
-            <FunctionFile resid="functionFile"/>
+            <!-- FunctionFile is required; we point it to the pane too -->
+            <FunctionFile resid="taskPaneUrl"/>
 
             <ExtensionPoint xsi:type="MessageComposeCommandSurface">
               <OfficeTab id="TabDefault">
@@ -73,7 +77,6 @@
                       <bt:Image size="32" resid="icon32"/>
                       <bt:Image size="80" resid="icon80"/>
                     </Icon>
-                    <!-- Task Pane action -->
                     <Action xsi:type="ShowTaskpane">
                       <SourceLocation resid="taskPaneUrl"/>
                       <SupportsPinning>true</SupportsPinning>
@@ -93,15 +96,15 @@
           <bt:Image id="icon80" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
         </bt:Images>
         <bt:Urls>
-          <bt:Url id="functionFile" DefaultValue="https://therepos.github.io/officejs/src/outlook/formatTables.html?v=16"/>
-          <bt:Url id="taskPaneUrl"  DefaultValue="https://therepos.github.io/officejs/src/outlook/formatTables.html?v=16"/>
+          <!-- Both point to your pane UI with cache-buster -->
+          <bt:Url id="taskPaneUrl" DefaultValue="https://therepos.github.io/officejs/src/outlook/taskpane.html?v=17"/>
         </bt:Urls>
         <bt:ShortStrings>
           <bt:String id="grpLabel" DefaultValue="Tools"/>
           <bt:String id="btnLabel" DefaultValue="Format Tables"/>
         </bt:ShortStrings>
         <bt:LongStrings>
-          <bt:String id="btnDesc" DefaultValue="Open task pane and format tables in the draft."/>
+          <bt:String id="btnDesc" DefaultValue="Open task pane with formatting tools."/>
         </bt:LongStrings>
       </Resources>
 
