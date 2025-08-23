@@ -3,61 +3,33 @@
 <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
 <script>
 (function () {
-  // Must be global for command buttons
   window.formatTables = function (event) {
-    try {
-      // 1) Prove it runs: show a notification in the compose header
-      if (Office.context.mailbox.item && Office.context.mailbox.item.notificationMessages) {
-        Office.context.mailbox.item.notificationMessages.replaceAsync("fmtStatus", {
-          type: Office.NotificationMessageType.InformationalMessage,
-          message: "Formatting tables…",
-          icon: "icon16",
-          persistent: false
-        });
+    Office.context.mailbox.item.body.getAsync(Office.CoercionType.Html, function (res) {
+      if (res.status !== Office.AsyncResultStatus.Succeeded) {
+        event.completed(); return;
       }
 
-      // 2) Read current HTML, rewrite all tables, write back
-      Office.context.mailbox.item.body.getAsync(Office.CoercionType.Html, function (r) {
-        if (r.status !== Office.AsyncResultStatus.Succeeded) { event.completed(); return; }
+      var wrapper = document.createElement("div");
+      wrapper.innerHTML = res.value;
 
-        var wrap = document.createElement('div');
-        wrap.innerHTML = r.value;
+      var borderCss = "1pt solid #d9d9d9";
+      var pad = "2px"; // 0.1in ≈ 9.6px, use smaller so Outlook keeps it
 
-        var borderCss = '1pt solid #d9d9d9';
-        var pad = '0.1in';
-
-        wrap.querySelectorAll('table').forEach(function (t) {
-          t.style.borderCollapse = 'collapse';
-          t.style.border = borderCss; // optional outer border
-          t.querySelectorAll('th, td').forEach(function (c) {
-            c.style.border = borderCss;
-            c.style.paddingTop = pad;
-            c.style.paddingRight = pad;
-            c.style.paddingBottom = pad;
-            c.style.paddingLeft = pad;
-          });
+      wrapper.querySelectorAll("table").forEach(function (t) {
+        t.style.borderCollapse = "collapse";
+        t.setAttribute("border", "1"); // extra hint for Outlook
+        t.querySelectorAll("th, td").forEach(function (c) {
+          c.style.border = borderCss;
+          c.style.padding = pad;
         });
-
-        Office.context.mailbox.item.body.setAsync(
-          wrap.innerHTML,
-          { coercionType: Office.CoercionType.Html },
-          function () {
-            // success toast
-            if (Office.context.mailbox.item && Office.context.mailbox.item.notificationMessages) {
-              Office.context.mailbox.item.notificationMessages.replaceAsync("fmtStatus", {
-                type: Office.NotificationMessageType.InformationalMessage,
-                message: "Tables formatted ✓",
-                icon: "icon16",
-                persistent: false
-              });
-            }
-            event.completed();
-          }
-        );
       });
-    } catch (e) {
-      event.completed();
-    }
+
+      Office.context.mailbox.item.body.setAsync(
+        wrapper.innerHTML,
+        { coercionType: Office.CoercionType.Html },
+        function () { event.completed(); }
+      );
+    });
   };
 })();
 </script>

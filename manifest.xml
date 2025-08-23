@@ -99,7 +99,7 @@
           <bt:Image id="icon80" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
         </bt:Images>
         <bt:Urls>
-          <bt:Url id="functionFile" DefaultValue="https://therepos.github.io/officejs/src/outlook/formatTables.html"/>
+          <bt:Url id="functionFile" DefaultValue="https://therepos.github.io/officejs/src/outlook/formatTables.html?v=4"/>
         </bt:Urls>
         <bt:ShortStrings>
           <bt:String id="groupLabel" DefaultValue="Outlook Tools"/>
