@@ -48,7 +48,7 @@
     <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
   </Rule>
 
-  <!-- Follow Microsoft example: VersionOverrides 1.0 wrapping 1.1 -->
+  <!-- Follow Microsoft sample: outer 1.0 wrapping inner 1.1 -->
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
     <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1" xsi:type="VersionOverridesV1_1">
       <Requirements>
@@ -65,7 +65,8 @@
 
             <!-- Compose surface with a CUSTOM TAB so it's visible -->
             <ExtensionPoint xsi:type="MessageComposeCommandSurface">
-              <CustomTab id="officeJsTab" label="OfficeJS">
+              <CustomTab id="officeJsTab">
+                <Label resid="officeJsTabLabel"/>
                 <Group id="msgComposeGroup">
                   <Label resid="groupLabel"/>
                   <Control xsi:type="Button" id="composeFormatTablesBtn">
@@ -98,10 +99,11 @@
           <bt:Image id="icon80" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
         </bt:Images>
         <bt:Urls>
-          <!-- add ?v=7 to bust cache if needed -->
+          <!-- Add ?v=7 to bust cache if needed -->
           <bt:Url id="functionFile" DefaultValue="https://therepos.github.io/officejs/src/outlook/formatTables.html?v=7"/>
         </bt:Urls>
         <bt:ShortStrings>
+          <bt:String id="officeJsTabLabel" DefaultValue="OfficeJS"/>
           <bt:String id="groupLabel" DefaultValue="Tools"/>
           <bt:String id="actionButtonLabel" DefaultValue="Format Tables"/>
         </bt:ShortStrings>
