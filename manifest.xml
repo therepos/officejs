@@ -97,7 +97,8 @@
         </bt:Images>
         <bt:Urls>
           <!-- Both point to your pane UI with cache-buster -->
-          <bt:Url id="taskPaneUrl" DefaultValue="https://therepos.github.io/officejs/src/outlook/taskpane.html?v=17"/>
+          <bt:Url id="taskPaneUrl" DefaultValue="https://therepos.github.io/officejs/src/outlook/taskpane.html?v=18"/>
+          <FunctionFile resid="taskPaneUrl"/>
         </bt:Urls>
         <bt:ShortStrings>
           <bt:String id="grpLabel" DefaultValue="Tools"/>
