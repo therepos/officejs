@@ -13,7 +13,9 @@ officejs/
 │   ├── outlook/
 │   │   └── blank.html        ← schema stub
 │   │   └── taskpane.html     ← cache buster
-│   │   └── taskpane.js       ← all features + UI
+│   │   └── taskpane.css      ← styles
+│   │   └── features.js       ← all features
+│   │   └── ui.js             ← UI
 │   └── shared/
 │       └── utils.js
 ├── assets/
