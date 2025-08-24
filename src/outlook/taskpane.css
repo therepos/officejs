@@ -1,107 +1,33 @@
-/* body{font:14px "Segoe UI",Arial,sans-serif;padding:12px;line-height:1.5}
-h3{margin:0 0 10px}
-:root{
-  --btn-bg:#f3f2f1;--btn-bg-h:#edebe9;--btn-bg-a:#e1dfdd;
-  --btn-b:#8a8886;--btn-text:#323130;--btn-focus:#0078d4;
-  --btn-p-bg:#0078d4;--btn-p-bg-h:#106ebe;--btn-p-text:#fff;--radius:4px
+/* reset the default top margin/padding */
+* { box-sizing: border-box; }
+html, body { height:100%; margin:0; padding:0; }
+
+/* put padding on a wrapper, not body (prevents margin-collapsing gaps) */
+.pane { padding:12px; }
+
+/* your existing styles... */
+:root { --btn:72px; --gap:8px; }
+h3 { margin:0 0 10px; }
+
+.stack{
+  display:grid;
+  grid-template-columns:repeat(3,var(--btn));
+  gap:var(--gap);
 }
+
+/* flat until hover */
 .m-btn{
-  display:inline-flex;align-items:center;gap:8px;
-  font:600 13px "Segoe UI",Arial,sans-serif;color:var(--btn-text);
-  background:var(--btn-bg);border:1px solid var(--btn-b);border-radius:var(--radius);
-  padding:6px 12px;cursor:pointer;user-select:none;
-  transition:background .12s,border-color .12s,box-shadow .12s;width:100%;text-align:left
+  width:var(--btn);height:var(--btn);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  background:transparent;border:1px solid transparent;border-radius:6px;color:#323130;cursor:pointer;
+  transition:background .12s,border-color .12s,box-shadow .12s;
+  text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;
 }
-.m-btn:hover{background:var(--btn-bg-h)}
-.m-btn:active{background:var(--btn-bg-a)}
-.m-btn:focus{outline:none;box-shadow:0 0 0 2px var(--btn-focus) inset}
-.m-btn.primary{background:var(--btn-p-bg);color:var(--btn-p-text);border-color:var(--btn-p-bg)}
-.m-btn.primary:hover{background:var(--btn-p-bg-h);border-color:var(--btn-p-bg-h)}
-.m-icon{width:16px;height:16px;display:inline-block}
-.stack{display:flex;flex-direction:column;gap:8px}
-#status{margin-top:12px;font-size:12px;color:#666} */
+.m-btn:hover{background:#edebe9;border-color:#c8c6c4}
+.m-btn:active{background:#e1dfdd;border-color:#a19f9d}
+.m-btn:focus{outline:none;box-shadow:0 0 0 2px #0078d4 inset}
 
-:root {
-  --btn: 72px;
-  --gap: 8px;
-}
+.m-icon{width:24px;height:24px;display:block}
+.m-btn>span{font:600 11px "Segoe UI Variable","Segoe UI",Arial,sans-serif;line-height:1.2;text-align:center;white-space:normal;word-break:break-word;max-width:calc(var(--btn) - 10px)}
 
-body {
-  font: 14px "Segoe UI Variable", "Segoe UI", Arial, sans-serif;
-  padding: 12px;
-  line-height: 1.5
-}
-
-h3 {
-  margin: 0 0 10px
-}
-
-.stack {
-  display: grid;
-  grid-template-columns: repeat(3, var(--btn));
-  /* 3 per row */
-  gap: var(--gap);
-}
-
-.m-btn {
-  width: var(--btn);
-  height: var(--btn);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  background: transparent;
-  /* no bg until hover */
-  border: 1px solid transparent;
-  /* no border until hover */
-  border-radius: 6px;
-  color: #323130;
-  cursor: pointer;
-  transition: background .12s, border-color .12s, box-shadow .12s;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-}
-
-.m-btn:hover {
-  background: #edebe9;
-  /* light hover bg */
-  border-color: #c8c6c4;
-  /* subtle border on hover */
-}
-
-.m-btn:active {
-  background: #e1dfdd;
-  border-color: #a19f9d;
-}
-
-.m-btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px #0078d4 inset;
-  /* same blue focus ring */
-}
-
-.m-icon {
-  width: 24px;
-  height: 24px;
-  display: block
-}
-
-.m-icon path {
-  shape-rendering: geometricPrecision
-}
-
-.m-btn>span {
-  font: 600 11px "Segoe UI Variable", "Segoe UI", Arial, sans-serif;
-  line-height: 1.2;
-  text-align: center;
-  white-space: normal;
-  word-break: break-word;
-  max-width: calc(var(--btn) - 10px);
-}
-
-#status {
-  margin-top: 12px;
-  font-size: 12px;
-  color: #666
-}
+#status{margin-top:12px;font-size:12px;color:#666}
