@@ -1,33 +1,87 @@
 /* reset the default top margin/padding */
-* { box-sizing: border-box; }
-html, body { height:100%; margin:0; padding:0; }
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 
 /* put padding on a wrapper, not body (prevents margin-collapsing gaps) */
-.pane { padding:12px; }
+.pane {
+  padding: 12px;
+}
 
 /* your existing styles... */
-:root { --btn:72px; --gap:8px; }
-h3 { margin:0 0 10px; }
+:root {
+  --btn: 72px;
+  --gap: 8px;
+}
 
-.stack{
-  display:grid;
-  grid-template-columns:repeat(3,var(--btn));
-  gap:var(--gap);
+h3 {
+  margin: 0 0 10px;
+}
+
+.stack {
+  display: grid;
+  grid-template-columns: repeat(3, var(--btn));
+  gap: var(--gap);
 }
 
 /* flat until hover */
-.m-btn{
-  width:var(--btn);height:var(--btn);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
-  background:transparent;border:1px solid transparent;border-radius:6px;color:#323130;cursor:pointer;
-  transition:background .12s,border-color .12s,box-shadow .12s;
-  text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;
+.m-btn {
+  width: var(--btn);
+  height: var(--btn);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: #323130;
+  cursor: pointer;
+  transition: background .12s, border-color .12s, box-shadow .12s;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
-.m-btn:hover{background:#edebe9;border-color:#c8c6c4}
-.m-btn:active{background:#e1dfdd;border-color:#a19f9d}
-.m-btn:focus{outline:none;box-shadow:0 0 0 2px #0078d4 inset}
 
-.m-icon{width:24px;height:24px;display:block}
-.m-btn>span{font:600 11px "Segoe UI Variable","Segoe UI",Arial,sans-serif;line-height:1.2;text-align:center;white-space:normal;word-break:break-word;max-width:calc(var(--btn) - 10px)}
+.m-btn:hover {
+  background: #edebe9;
+  border-color: #c8c6c4
+}
 
-#status{margin-top:12px;font-size:12px;color:#666}
+.m-btn:active {
+  background: #e1dfdd;
+  border-color: #a19f9d
+}
+
+.m-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #0078d4 inset
+}
+
+.m-icon {
+  width: 24px;
+  height: 24px;
+  display: block
+}
+
+.m-btn>span {
+  font: 600 11px "Segoe UI Variable", "Segoe UI", Arial, sans-serif;
+  line-height: 1.2;
+  text-align: center;
+  white-space: normal;
+  word-break: break-word;
+  max-width: calc(var(--btn) - 10px)
+}
+
+#status {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #666
+}
