@@ -26,7 +26,10 @@ officejs/
 └── README.md
 
 ```
----
+
 ## Notes
 - Manifest uses absolute HTTPS URLs pointing at `https://<username>.github.io/officejs/...`.
 - Add more buttons by creating new functions in taskpane.js.
+
+## Resources
+- [Office Add-ins with the add-in only manifest](https://learn.microsoft.com/en-us/office/dev/add-ins/develop/xml-manifest-overview?tabs=tabid-1)
