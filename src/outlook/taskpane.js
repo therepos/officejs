@@ -14,7 +14,7 @@
   const html = `
   <h3>OfficeJS Tools</h3>
   <div class="stack">
-    <button id="btnFormat"  class="m-btn"><svg class="m-icon" viewBox="0 0 16 16"><path d="M3 2h10c.55 0 1 .45 1 1v10c0 .55-.45 1-1 1H3c-.55 0-1-.45-1-1V3c0-.55.45-1 1-1Zm0 1v3h4V3H3Zm5 0v3h5V3H8ZM3 7v3h4V7H3Zm5 0v3h5V7H8ZM3 11v2h4v-2H3Zm5 0v2h5v-2H8Z" fill="#e6e6e6ff"/></svg>Format Tables</button>
+    <button id="btnFormat"  class="m-btn"><svg class="m-icon" viewBox="0 0 16 16"><path d="M3 2h10c.55 0 1 .45 1 1v10c0 .55-.45 1-1 1H3c-.55 0-1-.45-1-1V3c0-.55.45-1 1-1Zm0 1v3h4V3H3Zm5 0v3h5V3H8ZM3 7v3h4V7H3Zm5 0v3h5V7H8ZM3 11v2h4v-2H3Zm5 0v2h5v-2H8Z" fill="#9f9f9fff"/></svg>Format Tables</button>
     <button id="btnImg60"   class="m-btn"><svg class="m-icon" viewBox="0 0 16 16"><path d="M3 2h10c.55 0 1 .45 1 1v10c0 .55-.45 1-1 1H3c-.55 0-1-.45-1-1V3c0-.55.45-1 1-1Zm0 1v7.5l2.65-2.65c.2-.2.51-.2.7 0l2.15 2.15 3.65-3.64c.2-.2.51-.2.7 0L13 8.3V3H3Zm0 10h10V9.7l-1.15-1.15-3.65 3.64c-.2.2-.51.2-.7 0L5.35 9.9 3 12.24V13Z"/>
 <circle cx="11" cy="5" r="1"/></svg>Images 60%</button>
     <button id="btnArial11" class="m-btn primary"><svg class="m-icon" viewBox="0 0 16 16"><path d="M7.8 4h.5l3.7 8h-1.6l-.8-2H6.4l-.8 2H4.1L7.8 4zm.3 2.2L6.9 8.9h2.1L8.1 6.2z" fill="currentColor"/></svg>Arial 11</button>
