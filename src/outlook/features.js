@@ -25,51 +25,47 @@ async function resizeImages60() {
   status("Resizing images to 60% of original…");
   const html = await getHtml(), div = document.createElement('div'); div.innerHTML = html;
 
+  // helpers to read px from inline style
   const pxFrom = (style, prop) => {
     const m = new RegExp(`(?:^|;)\\s*${prop}\\s*:\\s*(\\d+(?:\\.\\d+)?)px`, 'i').exec(style || '');
-    return m ? parseFloat(m[1]) : NaN;
+    return m ? parseFloat(m[1]) : 0;
   };
-  const nearly = (a, b) => !isNaN(a) && !isNaN(b) && Math.abs(a - b) <= 1;
 
   div.querySelectorAll('img').forEach(img => {
-    // 1) Record originals ONCE (even if one dimension is unknown → store 0)
+    // 1) If we haven’t stored original dimensions, record them once
     if (!img.hasAttribute('data-orig-width') || !img.hasAttribute('data-orig-height')) {
-      const style = img.getAttribute('style') || '';
-      const styleW = pxFrom(style, 'width')  || 0;
-      const styleH = pxFrom(style, 'height') || 0;
-      const attrW  = parseInt(img.getAttribute('width'), 10)  || 0;
-      const attrH  = parseInt(img.getAttribute('height'), 10) || 0;
-      const natW   = img.naturalWidth  || 0;
-      const natH   = img.naturalHeight || 0;
+      let ow = 0, oh = 0;
 
-      // Priority: inline px style → attribute → natural
-      const ow = Math.round(styleW) || attrW || natW || 0;
-      const oh = Math.round(styleH) || attrH || natH || 0;
+      if (img.naturalWidth && img.naturalHeight) {
+        ow = img.naturalWidth; oh = img.naturalHeight;
+      } else if (img.width && img.height) {
+        ow = img.width; oh = img.height;
+      } else {
+        // 🔸 NEW: also try inline style px and width/height attributes (works on first click)
+        const style = img.getAttribute('style') || '';
+        const sw = pxFrom(style, 'width');
+        const sh = pxFrom(style, 'height');
+        const aw = parseInt(img.getAttribute('width'), 10)  || 0;
+        const ah = parseInt(img.getAttribute('height'), 10) || 0;
+        ow = sw || aw || 0;
+        oh = sh || ah || 0;
+      }
 
-      // Freeze BOTH attributes so this branch never runs again
-      img.setAttribute('data-orig-width',  String(ow));
-      img.setAttribute('data-orig-height', String(oh));
+      if (ow && oh) {
+        img.setAttribute('data-orig-width',  ow);
+        img.setAttribute('data-orig-height', oh);
+      }
     }
 
-    // 2) Use stored originals to set scaled size
-    const ow = parseInt(img.getAttribute('data-orig-width'), 10)  || 0;
-    const oh = parseInt(img.getAttribute('data-orig-height'), 10) || 0;
+    // 2) Use stored originals to set scaled size (idempotent)
+    const ow = parseInt(img.getAttribute('data-orig-width'), 10);
+    const oh = parseInt(img.getAttribute('data-orig-height'), 10);
 
-    // If we never discovered any pixels, skip (avoid % fallback to prevent enlarging)
-    if (!ow && !oh) return;
-
-    const targetW = ow ? Math.max(1, Math.round(ow * 0.6)) : NaN;
-    const targetH = oh ? Math.max(1, Math.round(oh * 0.6)) : NaN;
-
-    // If already at target, do nothing
-    const styleNow = img.getAttribute('style') || '';
-    const curW = pxFrom(styleNow, 'width');
-    const curH = pxFrom(styleNow, 'height');
-    if ((ow ? nearly(curW, targetW) : true) && (oh ? nearly(curH, targetH) : true)) return;
-
-    if (!isNaN(targetW)) img.style.width  = targetW + 'px';
-    if (!isNaN(targetH)) img.style.height = targetH + 'px';
-    img.style.maxWidth = '100%';
+    if (ow && oh) {
+      img.style.width  = Math.round(ow * 0.6) + "px";
+      img.style.height = Math.round(oh * 0.6) + "px";
+    }
+    img.style.maxWidth = "100%";
   });
 
   await setHtml(div.innerHTML);
