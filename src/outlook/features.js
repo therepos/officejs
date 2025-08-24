@@ -29,61 +29,72 @@ async function resizeImages60() {
     const m = new RegExp(`(?:^|;)\\s*${prop}\\s*:\\s*(\\d+(?:\\.\\d+)?)px\\s*(?:!important)?`, 'i').exec(style || '');
     return m ? parseFloat(m[1]) : NaN;
   };
-  const is60pct = (style) => /(?:^|;)\s*width\s*:\s*60%\s*(?:!important)?\s*(?:;|$)/i.test(style || '');
-  const nearly = (a,b) => !isNaN(a) && !isNaN(b) && Math.abs(a-b) <= 1;
+  const nearly = (a,b) => !isNaN(a) && !isNaN(b) && Math.abs(a - b) <= 1;
 
-  let updated = 0, skipped = 0;
+  let updated = 0, skipped = 0, pending = 0;
 
   div.querySelectorAll('img').forEach(img => {
+    // Already done? bail early.
+    if (img.getAttribute('data-oj-scaled') === '60') { skipped++; return; }
+
+    // 1) Get or infer pixel originals (attrs -> style px -> natural*)
+    let ow = parseInt(img.getAttribute('data-orig-width'), 10);
+    let oh = parseInt(img.getAttribute('data-orig-height'), 10);
+
+    if (!ow || !oh) {
+      const attrW = parseInt(img.getAttribute('width'), 10);
+      const attrH = parseInt(img.getAttribute('height'), 10);
+      const style  = img.getAttribute('style') || '';
+      const styleW = pxFrom(style, 'width');
+      const styleH = pxFrom(style, 'height');
+
+      if (!ow) ow = attrW || (!isNaN(styleW) ? Math.round(styleW) : 0);
+      if (!oh) oh = attrH || (!isNaN(styleH) ? Math.round(styleH) : 0);
+
+      // As a last resort, try natural sizes (often 0 on first click, nonzero later)
+      if ((!ow || !oh) && img.naturalWidth && img.naturalHeight) {
+        ow = ow || img.naturalWidth;
+        oh = oh || img.naturalHeight;
+      }
+
+      if (ow) img.setAttribute('data-orig-width', String(ow));
+      if (oh) img.setAttribute('data-orig-height', String(oh));
+    }
+
+    // If we still can't determine a pixel original, skip this time (don’t enlarge via %)
+    if (!ow && !oh) { pending++; return; }
+
+    const targetW = ow ? Math.max(1, Math.round(ow * 0.6)) : NaN;
+    const targetH = oh ? Math.max(1, Math.round(oh * 0.6)) : NaN;
+
     const style = img.getAttribute('style') || '';
-    let origW = parseInt(img.getAttribute('width'), 10);
-    let origH = parseInt(img.getAttribute('height'), 10);
+    const curW  = pxFrom(style, 'width');
+    const curH  = pxFrom(style, 'height');
 
-    const styleWpx = pxFrom(style, 'width');
-    const styleHpx = pxFrom(style, 'height');
-
-    // If no presentational attrs, freeze current px styles as "originals" once
-    if (!origW && !isNaN(styleWpx)) { origW = Math.round(styleWpx); img.setAttribute('width', String(origW)); }
-    if (!origH && !isNaN(styleHpx)) { origH = Math.round(styleHpx); img.setAttribute('height', String(origH)); }
-
-    // If we still don’t know original pixels, use % and make it idempotent
-    if (!origW && !origH) {
-      if (is60pct(style)) { skipped++; return; }            // already at 60%
-      img.style.setProperty('width',  '60%', 'important');  // one-time visible change
-      img.style.setProperty('height', 'auto', 'important');
-      img.style.setProperty('max-width', '100%', 'important');
-      updated++;
+    // Already at target? mark + skip.
+    if ((ow ? nearly(curW, targetW) : true) && (oh ? nearly(curH, targetH) : true)) {
+      img.setAttribute('data-oj-scaled', '60');
+      skipped++; 
       return;
     }
 
-    // Compute target(s) from originals
-    const targetW = origW ? Math.round(origW * 0.6) : NaN;
-    const targetH = origH ? Math.round(origH * 0.6) : NaN;
-
-    const curW = pxFrom(style, 'width');
-    const curH = pxFrom(style, 'height');
-
-    // If already at target, skip
-    if ((origW ? nearly(curW, targetW) : true) && (origH ? nearly(curH, targetH) : true)) {
-      skipped++; return;
-    }
-
-    // Apply target(s)
+    // 2) Apply target pixels (no % fallback to avoid upsizing)
     if (!isNaN(targetW)) img.style.setProperty('width',  targetW + 'px', 'important');
-    else                 img.style.setProperty('width',  '60%', 'important');
-
     if (!isNaN(targetH)) img.style.setProperty('height', targetH + 'px', 'important');
-    else                 img.style.setProperty('height', 'auto', 'important');
-
     img.style.setProperty('max-width', '100%', 'important');
 
-    // IMPORTANT: do NOT remove width/height attributes. They are our "original" reference.
+    // Keep width/height attributes as the “originals”; don’t remove them.
+    img.setAttribute('data-oj-scaled', '60');
     updated++;
   });
 
   await setHtml(div.innerHTML);
-  status(updated ? `Images set to 60% (${updated}) ✓${skipped?` — ${skipped} already at 60%`:''}` : 'No images to resize.');
+  let msg = updated ? `Images set to 60% (${updated}) ✓` : 'No images to resize.';
+  if (skipped) msg += ` — ${skipped} already at 60%`;
+  if (pending) msg += ` — ${pending} waiting for size info`;
+  status(msg);
 }
+
 
 async function setWholeBodyFont(family, sizePt) {
   status(`Setting ${family}${sizePt ? (' ' + sizePt) : ''}…`);
