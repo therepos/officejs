@@ -1,15 +1,29 @@
 <!doctype html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <title>OfficeJS Tools</title>
   <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
   <style>
-    body { font:14px Segoe UI, sans-serif; padding:12px; line-height:1.5; }
-    button { margin:4px 0; padding:6px 12px; }
-    #status { margin-top:10px; color:#666; }
+    body {
+      font: 14px Segoe UI, sans-serif;
+      padding: 12px;
+      line-height: 1.5;
+    }
+
+    button {
+      margin: 4px 0;
+      padding: 6px 12px;
+    }
+
+    #status {
+      margin-top: 10px;
+      color: #666;
+    }
   </style>
 </head>
+
 <body>
   <h3>OfficeJS Tools</h3>
   <button id="btnFormat">Format tables (1pt grey, 0.1in)</button><br>
@@ -19,98 +33,101 @@
   <button id="btnSelBlue">Make selected text Blue</button>
   <div id="status"></div>
 
-<script>
-Office.onReady(() => {
-  const status = msg => document.getElementById('status').textContent = msg;
+  <script>
+    Office.onReady(() => {
+      const status = msg => document.getElementById('status').textContent = msg;
 
-  const getHtml = () => new Promise(r=>{
-    Office.context.mailbox.item.body.getAsync(Office.CoercionType.Html, x=>r(x.value||""));
-  });
-  const setHtml = html => new Promise(r=>{
-    Office.context.mailbox.item.body.setAsync(html,{coercionType:Office.CoercionType.Html},()=>r());
-  });
-
-  async function formatTables(){
-    status("Formatting tables…");
-    const html = await getHtml(), div=document.createElement('div'); div.innerHTML=html;
-    const border='1pt solid #d9d9d9', pad='0.1in';
-    div.querySelectorAll('table').forEach(t=>{
-      t.style.borderCollapse='collapse';
-      t.style.border=border;
-      t.querySelectorAll('th,td').forEach(c=>{
-        c.style.border=border; c.style.padding=pad;
+      const getHtml = () => new Promise(r => {
+        Office.context.mailbox.item.body.getAsync(Office.CoercionType.Html, x => r(x.value || ""));
       });
-    });
-    await setHtml(div.innerHTML); status("Tables formatted ✓");
-  }
-
-  async function resizeImages60(){
-    status("Resizing images to 60%…");
-    const html = await getHtml(), div=document.createElement('div'); div.innerHTML=html;
-    const scale = 0.6;
-    div.querySelectorAll('img').forEach(img=>{
-      const w = img.width || img.naturalWidth;
-      const h = img.height || img.naturalHeight;
-      if (w && h) {
-        img.style.width  = Math.round(w*scale) + 'px';
-        img.style.height = Math.round(h*scale) + 'px';
-      } else {
-        img.style.width = '60%';
-        img.style.height = 'auto';
-      }
-      img.style.maxWidth = '100%';
-    });
-    await setHtml(div.innerHTML); status("Images resized ✓");
-  }
-
-  async function setWholeBodyFont(fontFamily, fontSizePt){
-    status(`Setting ${fontFamily} ${fontSizePt || ''}…`);
-    const html = await getHtml(), div=document.createElement('div'); div.innerHTML=html;
-
-    // apply to common text containers
-    div.querySelectorAll('p,div,span,td,th,li,blockquote,pre,h1,h2,h3,h4,h5,h6')
-      .forEach(el=>{
-        el.style.fontFamily = fontFamily;
-        if (fontSizePt) el.style.fontSize = fontSizePt + 'pt';
+      const setHtml = html => new Promise(r => {
+        Office.context.mailbox.item.body.setAsync(html, { coercionType: Office.CoercionType.Html }, () => r());
       });
 
-    await setHtml(div.innerHTML); status(`${fontFamily}${fontSizePt?' '+fontSizePt:''} applied ✓`);
-  }
-
-  // NEW: whole message → Arial 11
-  const setArial11 = () => setWholeBodyFont('Arial, Helvetica, sans-serif', 11);
-
-  // NEW: whole message → Times New Roman
-  const setTimesNewRoman = () => setWholeBodyFont('"Times New Roman", Times, serif');
-
-  // NEW: selection → Blue
-  function setSelectionBlue(){
-    status("Coloring selection blue…");
-    const html = '<span style="color:#0078d4;">'  // MS blue; use "blue" if you prefer
-               + Office.context.mailbox.item.getSelectedDataAsync // just to avoid typos
-               + '</span>';
-    // We cannot read the selected text synchronously; use setSelectedDataAsync with formatting wrapper.
-    Office.context.mailbox.item.setSelectedDataAsync(
-      '<span style="color:#0078d4;"></span>', // insert a styled span first
-      { coercionType: Office.CoercionType.Html },
-      () => {
-        // Now wrap the current selection with blue span preserving text:
-        Office.context.mailbox.item.getSelectedDataAsync(Office.CoercionType.Html, function(res){
-          const selected = (res.value && res.value.data) ? res.value.data : '';
-          const wrapped = `<span style="color:#0078d4;">${selected || ''}</span>`;
-          Office.context.mailbox.item.setSelectedDataAsync(wrapped, { coercionType: Office.CoercionType.Html }, ()=>status("Selection colored ✓"));
+      async function formatTables() {
+        status("Formatting tables…");
+        const html = await getHtml(), div = document.createElement('div'); div.innerHTML = html;
+        const border = '1pt solid #d9d9d9', pad = '0.1in';
+        div.querySelectorAll('table').forEach(t => {
+          t.style.borderCollapse = 'collapse';
+          t.style.border = border;
+          t.querySelectorAll('th,td').forEach(c => {
+            c.style.border = border; c.style.padding = pad;
+          });
         });
+        await setHtml(div.innerHTML); status("Tables formatted ✓");
       }
-    );
-  }
 
-  // Wire buttons
-  document.getElementById('btnFormat').onclick   = formatTables;
-  document.getElementById('btnImg60').onclick    = resizeImages60;
-  document.getElementById('btnArial11').onclick  = setArial11;
-  document.getElementById('btnTimes').onclick    = setTimesNewRoman;
-  document.getElementById('btnSelBlue').onclick  = setSelectionBlue;
-});
-</script>
+      async function resizeImages60() {
+        status("Resizing images to 60%…");
+        const html = await getHtml(), div = document.createElement('div'); div.innerHTML = html;
+        const scale = 0.6;
+        div.querySelectorAll('img').forEach(img => {
+          const w = img.width || img.naturalWidth;
+          const h = img.height || img.naturalHeight;
+          if (w && h) {
+            img.style.width = Math.round(w * scale) + 'px';
+            img.style.height = Math.round(h * scale) + 'px';
+          } else {
+            img.style.width = '60%';
+            img.style.height = 'auto';
+          }
+          img.style.maxWidth = '100%';
+        });
+        await setHtml(div.innerHTML); status("Images resized ✓");
+      }
+
+      async function setWholeBodyFont(fontFamily, fontSizePt) {
+        status(`Setting ${fontFamily} ${fontSizePt || ''}…`);
+        const html = await getHtml(), div = document.createElement('div'); div.innerHTML = html;
+
+        // apply to common text containers
+        div.querySelectorAll('p,div,span,td,th,li,blockquote,pre,h1,h2,h3,h4,h5,h6')
+          .forEach(el => {
+            el.style.fontFamily = fontFamily;
+            if (fontSizePt) el.style.fontSize = fontSizePt + 'pt';
+          });
+
+        await setHtml(div.innerHTML); status(`${fontFamily}${fontSizePt ? ' ' + fontSizePt : ''} applied ✓`);
+      }
+
+      // NEW: whole message → Arial 11
+      const setArial11 = () => setWholeBodyFont('Arial, Helvetica, sans-serif', 11);
+
+      // NEW: whole message → Times New Roman
+      const setTimesNewRoman = () => setWholeBodyFont('"Times New Roman", Times, serif');
+
+      // NEW: selection → Blue
+      function setSelectionBlue() {
+        status("Coloring selection blue…");
+        Office.context.mailbox.item.getSelectedDataAsync(
+          Office.CoercionType.Text,
+          function (res) {
+            const txt = res?.value?.data || "";
+            if (!txt) { status("Select some text first."); return; }
+
+            // escape & keep linebreaks
+            const esc = txt.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+              .replace(/"/g, "&quot;").replace(/\n/g, "<br>");
+            const html = `<span style="color:#0078d4;">${esc}</span>`;
+
+            Office.context.mailbox.item.setSelectedDataAsync(
+              html,
+              { coercionType: Office.CoercionType.Html },
+              () => status("Selection colored ✓")
+            );
+          }
+        );
+      }
+
+      // Wire buttons
+      document.getElementById('btnFormat').onclick = formatTables;
+      document.getElementById('btnImg60').onclick = resizeImages60;
+      document.getElementById('btnArial11').onclick = setArial11;
+      document.getElementById('btnTimes').onclick = setTimesNewRoman;
+      document.getElementById('btnSelBlue').onclick = setSelectionBlue;
+    });
+  </script>
 </body>
+
 </html>
