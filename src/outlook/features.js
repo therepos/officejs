@@ -25,76 +25,66 @@ async function resizeImages60() {
   status("Resizing images to 60% of original…");
   const html = await getHtml(), div = document.createElement('div'); div.innerHTML = html;
 
-  const cssNum = (style, name) => {
-    const m = new RegExp(`--${name}\\s*:\\s*(\\d+(?:\\.\\d+)?)\\b`).exec(style || '');
-    return m ? parseFloat(m[1]) : NaN;
-  };
   const pxFrom = (style, prop) => {
-    const m = new RegExp(`(?:^|;)\\s*${prop}\\s*:\\s*(\\d+(?:\\.\\d+)?)px`, 'i').exec(style || '');
+    const m = new RegExp(`(?:^|;)\\s*${prop}\\s*:\\s*(\\d+(?:\\.\\d+)?)px\\s*(?:!important)?`, 'i').exec(style || '');
     return m ? parseFloat(m[1]) : NaN;
   };
-  const setCssVar = (img, name, val) => {
-    if (isNaN(val)) return;
-    const re = new RegExp(`--${name}\\s*:\\s*[^;]+;?`);
-    let s = img.getAttribute('style') || '';
-    s = re.test(s) ? s.replace(re, `--${name}:${val};`) : (s + `;--${name}:${val};`);
-    img.setAttribute('style', s);
-  };
-  const hasClass = (el, c) => new RegExp(`\\b${c}\\b`).test(el.getAttribute('class') || '');
-  const addClass = (el, c) => el.setAttribute('class', ((el.getAttribute('class') || '') + ' ' + c).trim());
-  const eq = (a,b)=>!isNaN(a)&&!isNaN(b)&&Math.abs(a-b)<=1;
+  const is60pct = (style) => /(?:^|;)\s*width\s*:\s*60%\s*(?:!important)?\s*(?:;|$)/i.test(style || '');
+  const nearly = (a,b) => !isNaN(a) && !isNaN(b) && Math.abs(a-b) <= 1;
 
   let updated = 0, skipped = 0;
 
   div.querySelectorAll('img').forEach(img => {
     const style = img.getAttribute('style') || '';
+    let origW = parseInt(img.getAttribute('width'), 10);
+    let origH = parseInt(img.getAttribute('height'), 10);
 
-    // 1) Read stored originals if present (persisted in inline style)
-    let ow = cssNum(style, 'oj-orig-w');
-    let oh = cssNum(style, 'oj-orig-h');
+    const styleWpx = pxFrom(style, 'width');
+    const styleHpx = pxFrom(style, 'height');
 
-    // 2) If not stored yet, infer once from existing HTML (attrs or inline px)
-    if (isNaN(ow) || isNaN(oh)) {
-      const attrW = parseInt(img.getAttribute('width'), 10);
-      const attrH = parseInt(img.getAttribute('height'), 10);
-      const styleW = pxFrom(style, 'width');
-      const styleH = pxFrom(style, 'height');
-      if (isNaN(ow)) ow = !isNaN(styleW) ? styleW : (attrW || NaN);
-      if (isNaN(oh)) oh = !isNaN(styleH) ? styleH : (attrH || NaN);
+    // If no presentational attrs, freeze current px styles as "originals" once
+    if (!origW && !isNaN(styleWpx)) { origW = Math.round(styleWpx); img.setAttribute('width', String(origW)); }
+    if (!origH && !isNaN(styleHpx)) { origH = Math.round(styleHpx); img.setAttribute('height', String(origH)); }
+
+    // If we still don’t know original pixels, use % and make it idempotent
+    if (!origW && !origH) {
+      if (is60pct(style)) { skipped++; return; }            // already at 60%
+      img.style.setProperty('width',  '60%', 'important');  // one-time visible change
+      img.style.setProperty('height', 'auto', 'important');
+      img.style.setProperty('max-width', '100%', 'important');
+      updated++;
+      return;
     }
 
-    // 3) If we already processed (class marker) and we have no numeric originals, do nothing
-    if (hasClass(img, 'oj-sized-60') && isNaN(ow) && isNaN(oh)) { skipped++; return; }
-
-    // Targets from originals, if known
-    const tw = !isNaN(ow) ? Math.round(ow * 0.6) : NaN;
-    const th = !isNaN(oh) ? Math.round(oh * 0.6) : NaN;
+    // Compute target(s) from originals
+    const targetW = origW ? Math.round(origW * 0.6) : NaN;
+    const targetH = origH ? Math.round(origH * 0.6) : NaN;
 
     const curW = pxFrom(style, 'width');
     const curH = pxFrom(style, 'height');
 
-    // 4) If already at 60% (within 1px), skip
-    if ((!isNaN(tw) && eq(curW, tw)) && (isNaN(th) || eq(curH, th))) { skipped++; return; }
+    // If already at target, skip
+    if ((origW ? nearly(curW, targetW) : true) && (origH ? nearly(curH, targetH) : true)) {
+      skipped++; return;
+    }
 
-    // 5) Apply scaling once
-    if (!isNaN(tw)) img.style.setProperty('width',  tw + 'px', 'important');
-    else             img.style.setProperty('width',  '60%',   'important'); // fallback, one-time
+    // Apply target(s)
+    if (!isNaN(targetW)) img.style.setProperty('width',  targetW + 'px', 'important');
+    else                 img.style.setProperty('width',  '60%', 'important');
 
-    if (!isNaN(th)) img.style.setProperty('height', th + 'px', 'important');
-    else             img.style.setProperty('height', 'auto',   'important');
+    if (!isNaN(targetH)) img.style.setProperty('height', targetH + 'px', 'important');
+    else                 img.style.setProperty('height', 'auto', 'important');
 
     img.style.setProperty('max-width', '100%', 'important');
 
-    // Remove presentational attrs that can override
-    img.removeAttribute('width'); img.removeAttribute('height');
-
-    // Persist originals (so next click knows not to shrink again)
-    if (!isNaN(ow)) setCssVar(img, 'oj-orig-w', ow);
-    if (!isNaN(oh)) setCssVar(img, 'oj-orig-h', oh);
-    addClass(img, 'oj-sized-60');
-
+    // IMPORTANT: do NOT remove width/height attributes. They are our "original" reference.
     updated++;
   });
+
+  await setHtml(div.innerHTML);
+  status(updated ? `Images set to 60% (${updated}) ✓${skipped?` — ${skipped} already at 60%`:''}` : 'No images to resize.');
+}
+
 
   await setHtml(div.innerHTML);
   status(updated ? `Images set to 60% (${updated}) ✓${skipped?` — ${skipped} already at 60%`:''}` : 'No images to resize.');
