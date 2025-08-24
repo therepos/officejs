@@ -55,62 +55,31 @@
       status("Resizing images to 60% of original…");
       const html = await getHtml(), div = document.createElement('div'); div.innerHTML = html;
 
-      const pxFrom = (style, prop) => {
-        const m = new RegExp(`(?:^|;)\\s*${prop}\\s*:\\s*(\\d+(?:\\.\\d+)?)px`, 'i').exec(style || '');
-        return m ? parseFloat(m[1]) : NaN;
-      };
-      const pctFrom = (style, prop) => {
-        const m = new RegExp(`(?:^|;)\\s*${prop}\\s*:\\s*(\\d+(?:\\.\\d+)?)%`, 'i').exec(style || '');
-        return m ? parseFloat(m[1]) : NaN;
-      };
-
-      let changed = 0;
-
       div.querySelectorAll('img').forEach(img => {
-        // 1) Capture originals once (don’t rely on naturalWidth in detached DOM)
-        let ow = parseInt(img.getAttribute('data-orig-width'), 10);
-        let oh = parseInt(img.getAttribute('data-orig-height'), 10);
-
-        if (!ow || !oh) {
-          const attrW = parseInt(img.getAttribute('width'), 10);
-          const attrH = parseInt(img.getAttribute('height'), 10);
-          const style = img.getAttribute('style') || '';
-          const styleWpx = pxFrom(style, 'width');
-          const styleHpx = pxFrom(style, 'height');
-
-          if (!ow) ow = !isNaN(styleWpx) ? styleWpx : (attrW || 0);
-          if (!oh) oh = !isNaN(styleHpx) ? styleHpx : (attrH || 0);
-
-          if (ow) img.setAttribute('data-orig-width', String(ow));
-          if (oh) img.setAttribute('data-orig-height', String(oh));
+        // 1) If we haven’t stored original dimensions, record them once
+        if (!img.hasAttribute('data-orig-width') || !img.hasAttribute('data-orig-height')) {
+          if (img.naturalWidth && img.naturalHeight) {
+            img.setAttribute('data-orig-width', img.naturalWidth);
+            img.setAttribute('data-orig-height', img.naturalHeight);
+          } else if (img.width && img.height) {
+            img.setAttribute('data-orig-width', img.width);
+            img.setAttribute('data-orig-height', img.height);
+          }
         }
 
-        // 2) Apply 60% scaling (with solid fallbacks)
-        if (ow) {
-          img.style.setProperty('width', Math.round(ow * 0.6) + 'px', 'important');
-        } else {
-          // scale % if present, otherwise force 60% so first click is visible
-          const style = img.getAttribute('style') || '';
-          const wpct = pctFrom(style, 'width');
-          img.style.setProperty('width', !isNaN(wpct) ? (wpct * 0.6).toFixed(2) + '%' : '60%', 'important');
+        // 2) Use stored originals to set scaled size
+        const ow = parseInt(img.getAttribute('data-orig-width'), 10);
+        const oh = parseInt(img.getAttribute('data-orig-height'), 10);
+
+        if (ow && oh) {
+          img.style.width = Math.round(ow * 0.6) + "px";
+          img.style.height = Math.round(oh * 0.6) + "px";
         }
-
-        if (oh) {
-          img.style.setProperty('height', Math.round(oh * 0.6) + 'px', 'important');
-        } else {
-          img.style.setProperty('height', 'auto', 'important');
-        }
-
-        // play nice with layouts and Outlook’s sanitizer
-        img.style.setProperty('max-width', '100%', 'important');
-        img.removeAttribute('width');
-        img.removeAttribute('height');
-
-        changed++;
+        img.style.maxWidth = "100%";
       });
 
       await setHtml(div.innerHTML);
-      status(changed ? `Images resized (${changed}) ✓` : 'No images to resize.');
+      status("Images resized to 60% ✓");
     }
 
     async function setWholeBodyFont(family, sizePt) {
