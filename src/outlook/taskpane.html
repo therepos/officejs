@@ -101,18 +101,15 @@
       function setSelectionBlue() {
         status("Coloring selection blue…");
         Office.context.mailbox.item.getSelectedDataAsync(
-          Office.CoercionType.Text,
+          Office.CoercionType.Html,
           function (res) {
-            const txt = res?.value?.data || "";
-            if (!txt) { status("Select some text first."); return; }
+            const html = res?.value?.data || "";
+            if (!html.trim()) { status("Select some text first."); return; }
 
-            // escape & keep linebreaks
-            const esc = txt.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-              .replace(/"/g, "&quot;").replace(/\n/g, "<br>");
-            const html = `<span style="color:#0078d4;">${esc}</span>`;
-
+            // Keep existing formatting, just add color
+            const wrapped = `<span style="color:#0078d4;">${html}</span>`;
             Office.context.mailbox.item.setSelectedDataAsync(
-              html,
+              wrapped,
               { coercionType: Office.CoercionType.Html },
               () => status("Selection colored ✓")
             );
