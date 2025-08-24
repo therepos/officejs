@@ -14,7 +14,7 @@
   const html = `
   <h3>OfficeJS Tools</h3>
   <div class="stack">
-    <button id="btnFormat"  class="m-btn"><svg class="m-icon" viewBox="0 0 16 16"><path d="M3 2h10c.55 0 1 .45 1 1v10c0 .55-.45 1-1 1H3c-.55 0-1-.45-1-1V3c0-.55.45-1 1-1Zm0 1v3h4V3H3Zm5 0v3h5V3H8ZM3 7v3h4V7H3Zm5 0v3h5V7H8ZM3 11v2h4v-2H3Zm5 0v2h5v-2H8Z" fill="#e6e6e6ff"/></svg>Format tables (1pt grey, 0.1in)</button>
+    <button id="btnFormat"  class="m-btn"><svg class="m-icon" viewBox="0 0 16 16"><path d="M3 2h10c.55 0 1 .45 1 1v10c0 .55-.45 1-1 1H3c-.55 0-1-.45-1-1V3c0-.55.45-1 1-1Zm0 1v3h4V3H3Zm5 0v3h5V3H8ZM3 7v3h4V7H3Zm5 0v3h5V7H8ZM3 11v2h4v-2H3Zm5 0v2h5v-2H8Z" fill="#e6e6e6ff"/></svg>Format Tables</button>
     <button id="btnImg60"   class="m-btn"><svg class="m-icon" viewBox="0 0 16 16"><path d="M2 3h12v10H2zM3 11l3-3 2 2 3-4 2 3v3H3z" fill="currentColor"/></svg>Images 60%</button>
     <button id="btnArial11" class="m-btn primary"><svg class="m-icon" viewBox="0 0 16 16"><path d="M7.8 4h.5l3.7 8h-1.6l-.8-2H6.4l-.8 2H4.1L7.8 4zm.3 2.2L6.9 8.9h2.1L8.1 6.2z" fill="currentColor"/></svg>Arial 11</button>
     <button id="btnTimes"   class="m-btn"><svg class="m-icon" viewBox="0 0 16 16"><path d="M4 4h8v1H9v7H7V5H4z" fill="currentColor"/></svg>Times New Roman</button>
