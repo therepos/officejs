@@ -16,8 +16,8 @@
   <div class="stack">
     <button id="btnFormat"  class="m-btn"><svg class="m-icon" viewBox="0 0 16 16"><path d="M1 3h14v2H1zM1 7h14v2H1zM1 11h14v2H1z" fill="currentColor"/></svg>Format tables (1pt grey, 0.1in)</button>
     <button id="btnImg60"   class="m-btn"><svg class="m-icon" viewBox="0 0 16 16"><path d="M2 3h12v10H2zM3 11l3-3 2 2 3-4 2 3v3H3z" fill="currentColor"/></svg>Resize all images to 60%</button>
-    <button id="btnArial11" class="m-btn primary"><svg class="m-icon" viewBox="0 0 16 16"><path d="M7.8 4h.5l3.7 8h-1.6l-.8-2H6.4l-.8 2H4.1L7.8 4zm.3 2.2L6.9 8.9h2.1L8.1 6.2z" fill="currentColor"/></svg>Set entire message to Arial 11</button>
-    <button id="btnTimes"   class="m-btn"><svg class="m-icon" viewBox="0 0 16 16"><path d="M4 4h8v1H9v7H7V5H4z" fill="currentColor"/></svg>Set entire message to Times New Roman</button>
+    <button id="btnArial11" class="m-btn primary"><svg class="m-icon" viewBox="0 0 16 16"><path d="M7.8 4h.5l3.7 8h-1.6l-.8-2H6.4l-.8 2H4.1L7.8 4zm.3 2.2L6.9 8.9h2.1L8.1 6.2z" fill="currentColor"/></svg>Arial 11</button>
+    <button id="btnTimes"   class="m-btn"><svg class="m-icon" viewBox="0 0 16 16"><path d="M4 4h8v1H9v7H7V5H4z" fill="currentColor"/></svg>Times New Roman</button>
     <button id="btnSelBlue" class="m-btn"><svg class="m-icon" viewBox="0 0 16 16"><path d="M2 12h12v2H2zM3 3h10v2H3z" fill="currentColor"/></svg>Make selected text Blue</button>
   </div>
   <div id="status"></div>`;
