@@ -4,7 +4,6 @@
            xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
            xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0"
            xsi:type="MailApp">
-
   <Id>7f1a9b06-1d1c-4f3a-9a6d-6a3c8f2a4b0e</Id>
   <Version>1.0.0.0</Version>
   <ProviderName>therepos</ProviderName>
@@ -15,21 +14,12 @@
   <HighResolutionIconUrl DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
   <SupportUrl DefaultValue="https://therepos.github.io/officejs/"/>
 
-  <AppDomains>
-    <AppDomain>https://therepos.github.io</AppDomain>
-  </AppDomains>
+  <AppDomains><AppDomain>https://therepos.github.io</AppDomain></AppDomains>
 
-  <Hosts>
-    <Host Name="Mailbox"/>
-  </Hosts>
+  <Hosts><Host Name="Mailbox"/></Hosts>
 
-  <Requirements>
-    <Sets>
-      <Set Name="Mailbox" MinVersion="1.1"/>
-    </Sets>
-  </Requirements>
+  <Requirements><Sets><Set Name="Mailbox" MinVersion="1.1"/></Sets></Requirements>
 
-  <!-- Required by schema (ignored when VersionOverrides present) -->
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
@@ -41,35 +31,25 @@
 
   <Permissions>ReadWriteItem</Permissions>
 
-  <!-- Required by schema (ignored when VersionOverrides present) -->
   <Rule xsi:type="RuleCollection" Mode="Or">
     <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
   </Rule>
 
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
     <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1" xsi:type="VersionOverridesV1_1">
-
-      <Requirements>
-        <bt:Sets DefaultMinVersion="1.13">
-          <bt:Set Name="Mailbox"/>
-        </bt:Sets>
-      </Requirements>
+      <Requirements><bt:Sets DefaultMinVersion="1.13"><bt:Set Name="Mailbox"/></bt:Sets></Requirements>
 
       <Hosts>
         <Host xsi:type="MailHost">
           <DesktopFormFactor>
             <FunctionFile resid="taskPaneUrl"/>
-
             <ExtensionPoint xsi:type="MessageComposeCommandSurface">
               <OfficeTab id="TabDefault">
                 <Group id="grp1">
                   <Label resid="grpLabel"/>
-                  <Control xsi:type="Button" id="btnFormat">
+                  <Control xsi:type="Button" id="btnOpenPane">
                     <Label resid="btnLabel"/>
-                    <Supertip>
-                      <Title resid="btnLabel"/>
-                      <Description resid="btnDesc"/>
-                    </Supertip>
+                    <Supertip><Title resid="btnLabel"/><Description resid="btnDesc"/></Supertip>
                     <Icon>
                       <bt:Image size="16" resid="icon16"/>
                       <bt:Image size="32" resid="icon32"/>
@@ -94,7 +74,8 @@
           <bt:Image id="icon80" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
         </bt:Images>
         <bt:Urls>
-          <bt:Url id="taskPaneUrl" DefaultValue="https://therepos.github.io/officejs/src/outlook/taskpane.html?v=20"/>
+          <!-- STABLE url (no version); page self-busts cache when loading JS -->
+          <bt:Url id="taskPaneUrl" DefaultValue="https://therepos.github.io/officejs/src/outlook/taskpane.html"/>
         </bt:Urls>
         <bt:ShortStrings>
           <bt:String id="grpLabel" DefaultValue="Tools"/>
@@ -104,7 +85,6 @@
           <bt:String id="btnDesc" DefaultValue="Open the task pane with formatting tools."/>
         </bt:LongStrings>
       </Resources>
-
     </VersionOverrides>
   </VersionOverrides>
 </OfficeApp>
