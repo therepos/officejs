@@ -103,11 +103,21 @@
         Office.context.mailbox.item.getSelectedDataAsync(
           Office.CoercionType.Html,
           function (res) {
-            const html = res?.value?.data || "";
+            let html = res?.value?.data || "";
             if (!html.trim()) { status("Select some text first."); return; }
 
-            // Keep existing formatting, just add color
+            // 1) Unwrap existing blue spans to avoid nested wraps (which can get sanitized away)
+            //    Matches color:#0078d4 or 'blue' (case-insensitive), ignores extra styles/attrs.
+            const openBlueSpan = /<span\b([^>]*\bstyle\s*=\s*"(?:[^"]*;)?[^"]*color\s*:\s*(?:#0078d4|blue)\b[^"]*"(?:[^">]*)?)>/gi;
+            const closeSpan = /<\/span>/gi;
+            // Remove ONLY spans that set blue color; keep their inner HTML
+            html = html
+              .replace(openBlueSpan, "")   // remove opening blue spans
+              .replace(closeSpan, "");     // remove closing spans (pairs left by above)
+
+            // 2) Wrap selection once with our blue style (preserves existing font like Times NR)
             const wrapped = `<span style="color:#0078d4;">${html}</span>`;
+
             Office.context.mailbox.item.setSelectedDataAsync(
               wrapped,
               { coercionType: Office.CoercionType.Html },
@@ -116,7 +126,6 @@
           }
         );
       }
-
       // Wire buttons
       document.getElementById('btnFormat').onclick = formatTables;
       document.getElementById('btnImg60').onclick = resizeImages60;
