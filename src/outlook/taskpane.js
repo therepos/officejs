@@ -15,7 +15,7 @@
   <h3>OfficeJS Tools</h3>
   <div class="stack">
     <button id="btnFormat"  class="m-btn"><svg class="m-icon" viewBox="0 0 16 16"><path d="M1 3h14v2H1zM1 7h14v2H1zM1 11h14v2H1z" fill="currentColor"/></svg>Format tables (1pt grey, 0.1in)</button>
-    <button id="btnImg60"   class="m-btn"><svg class="m-icon" viewBox="0 0 16 16"><path d="M2 3h12v10H2zM3 11l3-3 2 2 3-4 2 3v3H3z" fill="currentColor"/></svg>Resize all images to 60%</button>
+    <button id="btnImg60"   class="m-btn"><svg class="m-icon" viewBox="0 0 16 16"><path d="M2 3h12v10H2zM3 11l3-3 2 2 3-4 2 3v3H3z" fill="currentColor"/></svg>Images 60%</button>
     <button id="btnArial11" class="m-btn primary"><svg class="m-icon" viewBox="0 0 16 16"><path d="M7.8 4h.5l3.7 8h-1.6l-.8-2H6.4l-.8 2H4.1L7.8 4zm.3 2.2L6.9 8.9h2.1L8.1 6.2z" fill="currentColor"/></svg>Arial 11</button>
     <button id="btnTimes"   class="m-btn"><svg class="m-icon" viewBox="0 0 16 16"><path d="M4 4h8v1H9v7H7V5H4z" fill="currentColor"/></svg>Times New Roman</button>
     <button id="btnSelBlue" class="m-btn"><svg class="m-icon" viewBox="0 0 16 16"><path d="M6.66 9.25h2.68l.77 2.25h1.48L8.9 2h-1.8l-2.7 9.5h1.43l.83-2.25Zm1.34-3.73c.17.52.33 1.05.49 1.59l.34 1.04H7.49l.35-1.04c.15-.54.31-1.07.48-1.59Zm-6 8.23c0-.41.34-.75.75-.75h10.5c.42 0 .75.34.75.75s-.33.75-.75.75H2.75a.75.75 0 0 1-.75-.75Z" fill="#0078d4"/></svg>Blue Text</button>
