@@ -1,0 +1,23 @@
+body{font:14px "Segoe UI",Arial,sans-serif;padding:12px;line-height:1.5}
+h3{margin:0 0 10px}
+:root{
+  --btn-bg:#f3f2f1;--btn-bg-h:#edebe9;--btn-bg-a:#e1dfdd;
+  --btn-b:#8a8886;--btn-text:#323130;--btn-focus:#0078d4;
+  --btn-p-bg:#0078d4;--btn-p-bg-h:#106ebe;--btn-p-text:#fff;--radius:4px
+}
+.m-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  font:600 13px "Segoe UI",Arial,sans-serif;color:var(--btn-text);
+  background:var(--btn-bg);border:1px solid var(--btn-b);border-radius:var(--radius);
+  padding:6px 12px;cursor:pointer;user-select:none;
+  transition:background .12s,border-color .12s,box-shadow .12s;width:100%;text-align:left
+}
+.m-btn:hover{background:var(--btn-bg-h)}
+.m-btn:active{background:var(--btn-bg-a)}
+.m-btn:focus{outline:none;box-shadow:0 0 0 2px var(--btn-focus) inset}
+.m-btn.primary{background:var(--btn-p-bg);color:var(--btn-p-text);border-color:var(--btn-p-bg)}
+.m-btn.primary:hover{background:var(--btn-p-bg-h);border-color:var(--btn-p-bg-h)}
+.m-icon{width:16px;height:16px;display:inline-block}
+.stack{display:flex;flex-direction:column;gap:8px}
+#status{margin-top:12px;font-size:12px;color:#666}
+
