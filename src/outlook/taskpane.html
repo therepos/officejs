@@ -33,5 +33,23 @@
 </div>
 <div id="status"></div>
 
-<script src="features.js?ts=<script>document.write(Date.now())</script>"></script>
-<script src="ui.js?ts=<script>document.write(Date.now())</script>"></script>
+<script>
+  (function () {
+    const v = Date.now().toString(); // unique each load
+    const addCss = (href) => {
+      const l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = href + '?v=' + v;
+      document.head.appendChild(l);
+    };
+    const addJs = (src) => new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = src + '?v=' + v;
+      s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+
+    addCss('taskpane.css');
+    addJs('features.js').then(() => addJs('ui.js'));
+  })();
+</script>
