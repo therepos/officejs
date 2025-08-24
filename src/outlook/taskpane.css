@@ -1,38 +1,42 @@
-/* reset + base */
-*{box-sizing:border-box}
-html,body{height:100%;margin:0}
-body{font:14px "Segoe UI","Segoe UI Variable",Arial,sans-serif;color:#323130;background:#fff}
+/* reset */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; }
+body {
+  font: 14px "Segoe UI","Segoe UI Variable",Arial,sans-serif;
+  color: #323130;
+  background: #fff;
+  padding: 16px;              /* spacing instead of wrapper */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+}
 
-/* container */
-.pane{padding:16px;display:grid;gap:12px;align-content:start}
-h3{margin:0}
+/* heading */
+h3 { margin: 0; }
 
-/* vertical stack of full-width buttons */
-.stack{display:flex;flex-direction:column;gap:8px}
+/* stack of buttons */
+.stack { display: flex; flex-direction: column; gap: 8px; }
 
 /* button */
-.m-btn{
-  width:100%;
-  display:inline-flex;align-items:center;gap:8px;
-  padding:10px 12px;
-  background:#fff;
-  border:1px solid #c8c6c4; border-radius:6px;
-  color:#323130; cursor:pointer;
-  transition:background .12s, border-color .12s, box-shadow .12s;
-  text-align:left;
+.m-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid #c8c6c4;
+  border-radius: 6px;
+  color: #323130;
+  cursor: pointer;
+  transition: background .12s, border-color .12s, box-shadow .12s;
+  text-align: left;
+  width: 100%;
 }
-.m-btn:hover{background:#f5f4f3;border-color:#a19f9d}
-.m-btn:active{background:#edebe9}
-.m-btn:focus{outline:none;box-shadow:0 0 0 2px #0078d4 inset}
+.m-btn:hover { background: #f5f4f3; border-color: #a19f9d; }
+.m-btn:active { background: #edebe9; }
+.m-btn:focus { outline: none; box-shadow: 0 0 0 2px #0078d4 inset; }
 
 /* icon + label */
-.m-icon{width:16px;height:16px;display:inline-block;flex:0 0 auto}
-.m-icon path{fill:currentColor}
-.m-btn > span{font-weight:600}
-
-/* optional: dark mode friendly (keeps basic look) */
-@media (prefers-color-scheme: dark){
-  body{background:#1f1f1f;color:#f3f2f1}
-  .m-btn{background:#2b2b2b;border-color:#3b3a39;color:#f3f2f1}
-  .m-btn:hover{background:#333233;border-color:#605e5c}
-}
+.m-icon { width: 16px; height: 16px; flex: 0 0 auto; }
+.m-btn > span { font-weight: 600; }
