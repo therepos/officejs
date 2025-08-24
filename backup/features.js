@@ -23,41 +23,16 @@ async function formatTables() {
 
 async function resizeImages60() {
   status("Resizing images to 60% of original…");
-  const html = await getHtml();
-  const div = document.createElement('div');
-  div.innerHTML = html;
+  const html = await getHtml(), div = document.createElement('div'); div.innerHTML = html;
 
-  // helper: read px from inline style
+  // helpers to read px from inline style
   const pxFrom = (style, prop) => {
     const m = new RegExp(`(?:^|;)\\s*${prop}\\s*:\\s*(\\d+(?:\\.\\d+)?)px`, 'i').exec(style || '');
     return m ? parseFloat(m[1]) : 0;
   };
 
-  // wait until imgs have some way to determine size
-  const imgs = Array.from(div.querySelectorAll('img'));
-  await Promise.all(imgs.map(img => {
-    // if we already have a way to size it, skip waiting
-    const style = img.getAttribute('style') || '';
-    if (
-      (img.naturalWidth && img.naturalHeight) ||
-      (img.width && img.height) ||
-      pxFrom(style, 'width') || pxFrom(style, 'height') ||
-      img.getAttribute('width') || img.getAttribute('height')
-    ) {
-      return Promise.resolve();
-    }
-    // otherwise wait for load/error once
-    return new Promise(res => {
-      const done = () => { img.removeEventListener('load', done); img.removeEventListener('error', done); res(); };
-      img.addEventListener('load', done, { once: true });
-      img.addEventListener('error', done, { once: true });
-      // if the image is already cached/complete but natural* not populated yet
-      if (img.complete) done();
-    });
-  }));
-
-  imgs.forEach(img => {
-    // 1) Capture original size once
+  div.querySelectorAll('img').forEach(img => {
+    // 1) If we haven’t stored original dimensions, record them once
     if (!img.hasAttribute('data-orig-width') || !img.hasAttribute('data-orig-height')) {
       let ow = 0, oh = 0;
 
@@ -66,7 +41,7 @@ async function resizeImages60() {
       } else if (img.width && img.height) {
         ow = img.width; oh = img.height;
       } else {
-        // fallbacks: inline style or width/height attributes
+        // NEW: also try inline style px and width/height attributes (works on first click)
         const style = img.getAttribute('style') || '';
         const sw = pxFrom(style, 'width');
         const sh = pxFrom(style, 'height');
@@ -82,14 +57,15 @@ async function resizeImages60() {
       }
     }
 
-    // 2) Apply 60% of stored originals (idempotent)
+    // 2) Use stored originals to set scaled size (idempotent)
     const ow = parseInt(img.getAttribute('data-orig-width'), 10);
     const oh = parseInt(img.getAttribute('data-orig-height'), 10);
+
     if (ow && oh) {
-      img.style.width  = Math.round(ow * 0.6) + 'px';
-      img.style.height = Math.round(oh * 0.6) + 'px';
+      img.style.width  = Math.round(ow * 0.6) + "px";
+      img.style.height = Math.round(oh * 0.6) + "px";
     }
-    img.style.maxWidth = '100%';
+    img.style.maxWidth = "100%";
   });
 
   await setHtml(div.innerHTML);
