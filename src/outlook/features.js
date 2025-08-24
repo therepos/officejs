@@ -85,11 +85,6 @@ async function resizeImages60() {
   status(updated ? `Images set to 60% (${updated}) ✓${skipped?` — ${skipped} already at 60%`:''}` : 'No images to resize.');
 }
 
-
-  await setHtml(div.innerHTML);
-  status(updated ? `Images set to 60% (${updated}) ✓${skipped?` — ${skipped} already at 60%`:''}` : 'No images to resize.');
-}
-
 async function setWholeBodyFont(family, sizePt) {
   status(`Setting ${family}${sizePt ? (' ' + sizePt) : ''}…`);
   const html = await getHtml(), div = wrapDiv(html);
