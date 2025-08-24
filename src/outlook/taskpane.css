@@ -1,32 +1,38 @@
-:root {
-  --btn-size:72px;   /* square size */
-  --gap:8px;
-}
+/* reset + base */
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font:14px "Segoe UI","Segoe UI Variable",Arial,sans-serif;color:#323130;background:#fff}
 
-.stack {
-  display:grid;
-  grid-template-columns:repeat(4, var(--btn-size));
-  gap:var(--gap);
-}
+/* container */
+.pane{padding:16px;display:grid;gap:12px;align-content:start}
+h3{margin:0}
 
-.m-btn {
-  width:var(--btn-size); height:var(--btn-size);
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
-  background:#f3f2f1; border:1px solid #8a8886; border-radius:6px;
+/* vertical stack of full-width buttons */
+.stack{display:flex;flex-direction:column;gap:8px}
+
+/* button */
+.m-btn{
+  width:100%;
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 12px;
+  background:#fff;
+  border:1px solid #c8c6c4; border-radius:6px;
   color:#323130; cursor:pointer;
-  transition:background .12s,border-color .12s,box-shadow .12s;
+  transition:background .12s, border-color .12s, box-shadow .12s;
+  text-align:left;
 }
-.m-btn:hover { background:#edebe9 }
-.m-btn:active { background:#e1dfdd }
-.m-btn:focus  { outline:none; box-shadow:0 0 0 2px #0078d4 inset }
+.m-btn:hover{background:#f5f4f3;border-color:#a19f9d}
+.m-btn:active{background:#edebe9}
+.m-btn:focus{outline:none;box-shadow:0 0 0 2px #0078d4 inset}
 
-.m-icon {
-  width:24px; height:24px; display:block;
-}
+/* icon + label */
+.m-icon{width:16px;height:16px;display:inline-block;flex:0 0 auto}
+.m-icon path{fill:currentColor}
+.m-btn > span{font-weight:600}
 
-.m-btn > span {
-  font:600 11px "Segoe UI",Arial,sans-serif;
-  line-height:1.2; text-align:center;
-  max-width:calc(var(--btn-size) - 10px);
-  white-space:normal; word-break:break-word;
+/* optional: dark mode friendly (keeps basic look) */
+@media (prefers-color-scheme: dark){
+  body{background:#1f1f1f;color:#f3f2f1}
+  .m-btn{background:#2b2b2b;border-color:#3b3a39;color:#f3f2f1}
+  .m-btn:hover{background:#333233;border-color:#605e5c}
 }
