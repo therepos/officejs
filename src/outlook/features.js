@@ -22,62 +22,78 @@ async function formatTables() {
 }
 
 async function resizeImages60() {
-  status("Resizing images to 60% of original…");
+  status("Resizing images to 60%…");
   const html = await getHtml(), div = wrapDiv(html);
+  let changed = 0;
 
-  const getPxFromStyle = (styleStr, prop) => {
-    if (!styleStr) return null;
-    const m = new RegExp(`(?:^|;)\\s*${prop}\\s*:\\s*(\\d+(?:\\.\\d+)?)px`, 'i').exec(styleStr);
-    return m ? parseFloat(m[1]) : null;
+  const pxFrom = (style, prop) => {
+    if (!style) return NaN;
+    const m = new RegExp(prop + "\\s*:\\s*(\\d+(?:\\.\\d+)?)px", "i").exec(style);
+    return m ? parseFloat(m[1]) : NaN;
+  };
+  const pctFrom = (style, prop) => {
+    if (!style) return NaN;
+    const m = new RegExp(prop + "\\s*:\\s*(\\d+(?:\\.\\d+)?)%", "i").exec(style);
+    return m ? parseFloat(m[1]) : NaN;
   };
 
-  div.querySelectorAll('img').forEach(img => {
-    // 1) Establish originals: prefer pre-existing data-*; else read from attributes/style.
-    let ow = parseInt(img.getAttribute('data-orig-width'), 10);
-    let oh = parseInt(img.getAttribute('data-orig-height'), 10);
+  div.querySelectorAll("img").forEach(img => {
+    const attrW = parseInt(img.getAttribute("width"), 10);
+    const attrH = parseInt(img.getAttribute("height"), 10);
+    const style = img.getAttribute("style") || "";
+    const styleWpx = pxFrom(style, "width");
+    const styleHpx = pxFrom(style, "height");
+    const styleWpct = pctFrom(style, "width");
+    const styleHpct = pctFrom(style, "height");
 
+    // originals (once)
+    let ow = parseInt(img.getAttribute("data-orig-width"), 10);
+    let oh = parseInt(img.getAttribute("data-orig-height"), 10);
     if (!ow || !oh) {
-      const attrW = parseInt(img.getAttribute('width'), 10);
-      const attrH = parseInt(img.getAttribute('height'), 10);
-      const style = img.getAttribute('style') || "";
-      const styleW = getPxFromStyle(style, 'width');
-      const styleH = getPxFromStyle(style, 'height');
-
-      // Try to infer a pair that preserves aspect ratio
-      // Priority: (styleW, styleH) → (attrW, attrH) → (styleW, attrH) / (attrW, styleH)
-      // If only one dimension is known, we’ll scale that and let the other be auto.
-      ow = ow || styleW || attrW || 0;
-      oh = oh || styleH || attrH || 0;
-
-      // As a last resort, if neither px is known and images aren't loaded, leave originals unset.
-      if (ow) img.setAttribute('data-orig-width', String(ow));
-      if (oh) img.setAttribute('data-orig-height', String(oh));
+      if (!isNaN(styleWpx)) ow = ow || styleWpx;
+      if (!isNaN(styleHpx)) oh = oh || styleHpx;
+      if (!ow && attrW) ow = attrW;
+      if (!oh && attrH) oh = attrH;
+      if (ow) img.setAttribute("data-orig-width", ow);
+      if (oh) img.setAttribute("data-orig-height", oh);
     }
 
-    // 2) Apply 60% scaling
-    if (ow && oh) {
-      img.style.width = Math.round(ow * 0.6) + 'px';
-      img.style.height = Math.round(oh * 0.6) + 'px';
-    } else if (ow && !oh) {
-      // Only width known: scale width, keep aspect
-      img.style.width = Math.round(ow * 0.6) + 'px';
-      img.style.height = 'auto';
-    } else if (!ow && oh) {
-      // Only height known: scale height, let width auto
-      img.style.height = Math.round(oh * 0.6) + 'px';
-      img.style.width = 'auto';
+    // apply width
+    if (ow) {
+      img.style.setProperty("width", Math.round(ow * 0.6) + "px", "important");
+    } else if (!isNaN(styleWpct)) {
+      img.style.setProperty("width", (styleWpct * 0.6).toFixed(2) + "%", "important");
+    } else if (attrW) {
+      img.style.setProperty("width", Math.round(attrW * 0.6) + "px", "important");
     } else {
-      // Nothing known yet: use relative width; first click will still work
-      img.style.width = '60%';
-      img.style.height = 'auto';
+      img.style.setProperty("width", "60%", "important"); // final fallback
     }
 
-    img.style.maxWidth = '100%';
+    // apply height (keep aspect if we have a number; otherwise auto)
+    if (oh) {
+      img.style.setProperty("height", Math.round(oh * 0.6) + "px", "important");
+    } else if (!isNaN(styleHpct)) {
+      img.style.setProperty("height", (styleHpct * 0.6).toFixed(2) + "%", "important");
+    } else if (attrH) {
+      img.style.setProperty("height", Math.round(attrH * 0.6) + "px", "important");
+    } else {
+      img.style.setProperty("height", "auto", "important");
+    }
+
+    // play nice with layouts
+    img.style.setProperty("max-width", "100%", "important");
+
+    // remove conflicting presentational attrs that can override in OWA
+    if (attrW) img.removeAttribute("width");
+    if (attrH) img.removeAttribute("height");
+
+    changed++;
   });
 
   await setHtml(div.innerHTML);
-  status("Images resized to 60% ✓");
+  status(changed ? `Images resized (${changed}) ✓` : "No images to resize.");
 }
+
 
 async function setWholeBodyFont(family, sizePt) {
   status(`Setting ${family}${sizePt ? (' ' + sizePt) : ''}…`);
