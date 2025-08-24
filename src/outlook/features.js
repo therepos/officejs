@@ -25,62 +25,79 @@ async function resizeImages60() {
   status("Resizing images to 60% of original…");
   const html = await getHtml(), div = document.createElement('div'); div.innerHTML = html;
 
+  const cssNum = (style, name) => {
+    const m = new RegExp(`--${name}\\s*:\\s*(\\d+(?:\\.\\d+)?)\\b`).exec(style || '');
+    return m ? parseFloat(m[1]) : NaN;
+  };
   const pxFrom = (style, prop) => {
     const m = new RegExp(`(?:^|;)\\s*${prop}\\s*:\\s*(\\d+(?:\\.\\d+)?)px`, 'i').exec(style || '');
     return m ? parseFloat(m[1]) : NaN;
   };
-  const pctFrom = (style, prop) => {
-    const m = new RegExp(`(?:^|;)\\s*${prop}\\s*:\\s*(\\d+(?:\\.\\d+)?)%`, 'i').exec(style || '');
-    return m ? parseFloat(m[1]) : NaN;
+  const setCssVar = (img, name, val) => {
+    if (isNaN(val)) return;
+    const re = new RegExp(`--${name}\\s*:\\s*[^;]+;?`);
+    let s = img.getAttribute('style') || '';
+    s = re.test(s) ? s.replace(re, `--${name}:${val};`) : (s + `;--${name}:${val};`);
+    img.setAttribute('style', s);
   };
+  const hasClass = (el, c) => new RegExp(`\\b${c}\\b`).test(el.getAttribute('class') || '');
+  const addClass = (el, c) => el.setAttribute('class', ((el.getAttribute('class') || '') + ' ' + c).trim());
+  const eq = (a,b)=>!isNaN(a)&&!isNaN(b)&&Math.abs(a-b)<=1;
 
-  let changed = 0;
+  let updated = 0, skipped = 0;
 
   div.querySelectorAll('img').forEach(img => {
-    // 1) Capture originals once (don’t rely on naturalWidth in detached DOM)
-    let ow = parseInt(img.getAttribute('data-orig-width'), 10);
-    let oh = parseInt(img.getAttribute('data-orig-height'), 10);
+    const style = img.getAttribute('style') || '';
 
-    if (!ow || !oh) {
+    // 1) Read stored originals if present (persisted in inline style)
+    let ow = cssNum(style, 'oj-orig-w');
+    let oh = cssNum(style, 'oj-orig-h');
+
+    // 2) If not stored yet, infer once from existing HTML (attrs or inline px)
+    if (isNaN(ow) || isNaN(oh)) {
       const attrW = parseInt(img.getAttribute('width'), 10);
       const attrH = parseInt(img.getAttribute('height'), 10);
-      const style = img.getAttribute('style') || '';
-      const styleWpx = pxFrom(style, 'width');
-      const styleHpx = pxFrom(style, 'height');
-
-      if (!ow) ow = !isNaN(styleWpx) ? styleWpx : (attrW || 0);
-      if (!oh) oh = !isNaN(styleHpx) ? styleHpx : (attrH || 0);
-
-      if (ow) img.setAttribute('data-orig-width', String(ow));
-      if (oh) img.setAttribute('data-orig-height', String(oh));
+      const styleW = pxFrom(style, 'width');
+      const styleH = pxFrom(style, 'height');
+      if (isNaN(ow)) ow = !isNaN(styleW) ? styleW : (attrW || NaN);
+      if (isNaN(oh)) oh = !isNaN(styleH) ? styleH : (attrH || NaN);
     }
 
-    // 2) Apply 60% scaling (with solid fallbacks)
-    if (ow) {
-      img.style.setProperty('width', Math.round(ow * 0.6) + 'px', 'important');
-    } else {
-      // scale % if present, otherwise force 60% so first click is visible
-      const style = img.getAttribute('style') || '';
-      const wpct = pctFrom(style, 'width');
-      img.style.setProperty('width', !isNaN(wpct) ? (wpct * 0.6).toFixed(2) + '%' : '60%', 'important');
-    }
+    // 3) If we already processed (class marker) and we have no numeric originals, do nothing
+    if (hasClass(img, 'oj-sized-60') && isNaN(ow) && isNaN(oh)) { skipped++; return; }
 
-    if (oh) {
-      img.style.setProperty('height', Math.round(oh * 0.6) + 'px', 'important');
-    } else {
-      img.style.setProperty('height', 'auto', 'important');
-    }
+    // Targets from originals, if known
+    const tw = !isNaN(ow) ? Math.round(ow * 0.6) : NaN;
+    const th = !isNaN(oh) ? Math.round(oh * 0.6) : NaN;
 
-    // play nice with layouts and Outlook’s sanitizer
+    const curW = pxFrom(style, 'width');
+    const curH = pxFrom(style, 'height');
+
+    // 4) If already at 60% (within 1px), skip
+    if ((!isNaN(tw) && eq(curW, tw)) && (isNaN(th) || eq(curH, th))) { skipped++; return; }
+
+    // 5) Apply scaling once
+    if (!isNaN(tw)) img.style.setProperty('width',  tw + 'px', 'important');
+    else             img.style.setProperty('width',  '60%',   'important'); // fallback, one-time
+
+    if (!isNaN(th)) img.style.setProperty('height', th + 'px', 'important');
+    else             img.style.setProperty('height', 'auto',   'important');
+
     img.style.setProperty('max-width', '100%', 'important');
-    img.removeAttribute('width');
-    img.removeAttribute('height');
 
-    changed++;
+    // Remove presentational attrs that can override
+    img.removeAttribute('width'); img.removeAttribute('height');
+
+    // Persist originals (so next click knows not to shrink again)
+    if (!isNaN(ow)) setCssVar(img, 'oj-orig-w', ow);
+    if (!isNaN(oh)) setCssVar(img, 'oj-orig-h', oh);
+    addClass(img, 'oj-sized-60');
+
+    updated++;
   });
 
   await setHtml(div.innerHTML);
-  status(changed ? `Images resized (${changed}) ✓` : 'No images to resize.');
+  status(updated ? `Images set to 60% (${updated}) ✓${skipped?` — ${skipped} already at 60%`:''}` : 'No images to resize.');
 }
 
 async function setWholeBodyFont(family, sizePt) {
