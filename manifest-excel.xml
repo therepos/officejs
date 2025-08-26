@@ -6,7 +6,7 @@
            xsi:type="TaskPaneApp">
 
   <!-- CHANGE THIS TO A NEW GUID -->
-  <Id>REPLACE-WITH-NEW-GUID</Id>
+  <Id>a0341c6f-ae51-4530-b790-a145e04333ea</Id>
   <Version>1.0.0.0</Version>
   <ProviderName>therepos</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
