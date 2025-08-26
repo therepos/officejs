@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
   <meta charset="utf-8" />
   <title>Excel Tools</title>
@@ -9,10 +9,15 @@
 <body>
   <h3>Excel</h3>
   <div class="stack">
-    <button id="btnArial8" class="m-btn">Set workbook → Arial 8</button>
-    <button id="btnGridOff" class="m-btn">Hide gridlines (all sheets)</button>
+    <button id="btnArial8" class="m-btn">
+      <span class="icon">A</span> Arial 8
+    </button>
+
+    <button id="btnGridOff" class="m-btn">
+      <span class="icon">▦</span> Hide Gridlines
+    </button>
   </div>
   <div id="status"></div>
-  <script src="./features.js" defer></script>
+  <script src="./features.js"></script>
 </body>
 </html>
