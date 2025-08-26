@@ -14,18 +14,12 @@
   <HighResolutionIconUrl DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
   <SupportUrl DefaultValue="https://therepos.github.io/officejs/"/>
 
-  <AppDomains>
-    <AppDomain>https://therepos.github.io</AppDomain>
-  </AppDomains>
-
-  <Requirements>
-    <Sets>
-      <Set Name="Mailbox" MinVersion="1.1"/>
-    </Sets>
-  </Requirements>
+  <AppDomains><AppDomain>https://therepos.github.io</AppDomain></AppDomains>
 
   <Hosts><Host Name="Mailbox"/></Hosts>
-  
+
+  <Requirements><Sets><Set Name="Mailbox" MinVersion="1.1"/></Sets></Requirements>
+
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
