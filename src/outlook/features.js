@@ -173,7 +173,7 @@ function setSelectionBlue() {
   );
 }
 
-// ----------------- wire up UI (moved from ui.js) -----------------
+// ----------------- UI -----------------
 Office.onReady(() => {
   const $ = (id) => document.getElementById(id);
 
@@ -183,10 +183,4 @@ Office.onReady(() => {
   $("btnTimes").onclick = setTimes;
   $("btnSelBlue").onclick = setSelectionBlue;
 
-  // If you also invoke from Ribbon/Commands, associate handlers:
-  // Office.actions.associate("formatTables", formatTables);
-  // Office.actions.associate("resizeImages60", resizeImages60);
-  // Office.actions.associate("setArial11", setArial11);
-  // Office.actions.associate("setTimes", setTimes);
-  // Office.actions.associate("setSelectionBlue", setSelectionBlue);
 });
