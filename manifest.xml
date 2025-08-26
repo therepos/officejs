@@ -16,26 +16,27 @@
     <AppDomain>https://therepos.github.io</AppDomain>
   </AppDomains>
 
-  <!-- Lowered requirement for broad support -->
+  <!-- broad support -->
   <Requirements>
-    <Sets>
-      <Set Name="Mailbox" MinVersion="1.8"/>
-    </Sets>
+    <Sets><Set Name="Mailbox" MinVersion="1.8"/></Sets>
   </Requirements>
 
-  <!-- NOTE: must use mailappor:VersionOverrides -->
-  <mailappor:VersionOverrides xsi:type="mailappor:VersionOverridesV1_0">
+  <!-- REQUIRED in base schema -->
+  <Permissions>ReadWriteItem</Permissions>
+  <Rule xsi:type="RuleCollection" Mode="And">
+    <!-- Compose (new message) -->
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Edit"/>
+  </Rule>
 
+  <!-- NOTE: mailappor namespace + correct child prefixes -->
+  <mailappor:VersionOverrides xsi:type="mailappor:VersionOverridesV1_0">
     <mailappor:Requirements>
-      <bt:Sets DefaultMinVersion="1.8">
-        <bt:Set Name="Mailbox"/>
-      </bt:Sets>
+      <bt:Sets DefaultMinVersion="1.8"><bt:Set Name="Mailbox"/></bt:Sets>
     </mailappor:Requirements>
 
     <mailappor:Hosts>
       <mailappor:Host xsi:type="MailHost">
 
-        <!-- Desktop/Web/Mac -->
         <mailappor:DesktopFormFactor>
           <mailappor:FunctionFile resid="functionFileUrl"/>
           <mailappor:ExtensionPoint xsi:type="MessageComposeCommandSurface">
@@ -62,7 +63,6 @@
           </mailappor:ExtensionPoint>
         </mailappor:DesktopFormFactor>
 
-        <!-- Mobile -->
         <mailappor:MobileFormFactor>
           <mailappor:FunctionFile resid="functionFileUrl"/>
           <mailappor:ExtensionPoint xsi:type="MessageComposeCommandSurface">
@@ -95,7 +95,6 @@
         <bt:Url id="functionFileUrl" DefaultValue="https://therepos.github.io/officejs/src/outlook/commands.html"/>
         <bt:Url id="taskpaneUrl"    DefaultValue="https://therepos.github.io/officejs/src/outlook/taskpane.html"/>
       </bt:Urls>
-
       <bt:ShortStrings>
         <bt:String id="grpLabel" DefaultValue="OfficeJS Tools"/>
         <bt:String id="btnLabel" DefaultValue="Open Tools"/>
@@ -103,13 +102,11 @@
       <bt:LongStrings>
         <bt:String id="btnDesc" DefaultValue="Open the taskpane with editing helpers."/>
       </bt:LongStrings>
-
       <bt:Images>
         <bt:Image id="icon16" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-16.png"/>
         <bt:Image id="icon32" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-32.png"/>
         <bt:Image id="icon80" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
       </bt:Images>
     </mailappor:Resources>
-
   </mailappor:VersionOverrides>
 </OfficeApp>
