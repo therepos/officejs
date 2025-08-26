@@ -4,6 +4,7 @@
            xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
            xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0"
            xsi:type="MailApp">
+
   <Id>7f1a9b06-1d1c-4f3a-9a6d-6a3c8f2a4b0e</Id>
   <Version>1.0.0.0</Version>
   <ProviderName>therepos</ProviderName>
@@ -15,81 +16,84 @@
     <AppDomain>https://therepos.github.io</AppDomain>
   </AppDomains>
 
-  <!-- Lowered for broad client support -->
+  <!-- Lowered requirement for broad support -->
   <Requirements>
     <Sets>
       <Set Name="Mailbox" MinVersion="1.8"/>
     </Sets>
   </Requirements>
 
-  <VersionOverrides xsi:type="mailappor:VersionOverridesV1_0">
-    <Requirements>
+  <!-- NOTE: must use mailappor:VersionOverrides -->
+  <mailappor:VersionOverrides xsi:type="mailappor:VersionOverridesV1_0">
+
+    <mailappor:Requirements>
       <bt:Sets DefaultMinVersion="1.8">
         <bt:Set Name="Mailbox"/>
       </bt:Sets>
-    </Requirements>
+    </mailappor:Requirements>
 
-    <Hosts>
-      <Host xsi:type="MailHost">
+    <mailappor:Hosts>
+      <mailappor:Host xsi:type="MailHost">
+
         <!-- Desktop/Web/Mac -->
-        <DesktopFormFactor>
-          <FunctionFile resid="functionFileUrl"/>
-          <ExtensionPoint xsi:type="MessageComposeCommandSurface">
-            <OfficeTab id="TabDefault">
-              <Group id="grpCompose">
-                <Label resid="grpLabel"/>
-                <Control xsi:type="Button" id="btnOpenPane">
-                  <Label resid="btnLabel"/>
-                  <Supertip>
-                    <Title resid="btnLabel"/>
-                    <Description resid="btnDesc"/>
-                  </Supertip>
-                  <Icon>
+        <mailappor:DesktopFormFactor>
+          <mailappor:FunctionFile resid="functionFileUrl"/>
+          <mailappor:ExtensionPoint xsi:type="MessageComposeCommandSurface">
+            <mailappor:OfficeTab id="TabDefault">
+              <mailappor:Group id="grpCompose">
+                <mailappor:Label resid="grpLabel"/>
+                <mailappor:Control xsi:type="Button" id="btnOpenPane">
+                  <mailappor:Label resid="btnLabel"/>
+                  <mailappor:Supertip>
+                    <mailappor:Title resid="btnLabel"/>
+                    <mailappor:Description resid="btnDesc"/>
+                  </mailappor:Supertip>
+                  <mailappor:Icon>
                     <bt:Image size="16" resid="icon16"/>
                     <bt:Image size="32" resid="icon32"/>
                     <bt:Image size="80" resid="icon80"/>
-                  </Icon>
-                  <Action xsi:type="ShowTaskpane">
-                    <SourceLocation resid="taskpaneUrl"/>
-                  </Action>
-                </Control>
-              </Group>
-            </OfficeTab>
-          </ExtensionPoint>
-        </DesktopFormFactor>
+                  </mailappor:Icon>
+                  <mailappor:Action xsi:type="ShowTaskpane">
+                    <mailappor:SourceLocation resid="taskpaneUrl"/>
+                  </mailappor:Action>
+                </mailappor:Control>
+              </mailappor:Group>
+            </mailappor:OfficeTab>
+          </mailappor:ExtensionPoint>
+        </mailappor:DesktopFormFactor>
 
-        <!-- Mobile (optional but recommended) -->
-        <MobileFormFactor>
-          <FunctionFile resid="functionFileUrl"/>
-          <ExtensionPoint xsi:type="MessageComposeCommandSurface">
-            <Group id="grpComposeMobile">
-              <Label resid="grpLabel"/>
-              <Control xsi:type="Button" id="btnOpenPaneMobile">
-                <Label resid="btnLabel"/>
-                <Supertip>
-                  <Title resid="btnLabel"/>
-                  <Description resid="btnDesc"/>
-                </Supertip>
-                <Icon>
+        <!-- Mobile -->
+        <mailappor:MobileFormFactor>
+          <mailappor:FunctionFile resid="functionFileUrl"/>
+          <mailappor:ExtensionPoint xsi:type="MessageComposeCommandSurface">
+            <mailappor:Group id="grpComposeMobile">
+              <mailappor:Label resid="grpLabel"/>
+              <mailappor:Control xsi:type="Button" id="btnOpenPaneMobile">
+                <mailappor:Label resid="btnLabel"/>
+                <mailappor:Supertip>
+                  <mailappor:Title resid="btnLabel"/>
+                  <mailappor:Description resid="btnDesc"/>
+                </mailappor:Supertip>
+                <mailappor:Icon>
                   <bt:Image size="16" resid="icon16"/>
                   <bt:Image size="32" resid="icon32"/>
                   <bt:Image size="80" resid="icon80"/>
-                </Icon>
-                <Action xsi:type="ShowTaskpane">
-                  <SourceLocation resid="taskpaneUrl"/>
-                </Action>
-              </Control>
-            </Group>
-          </ExtensionPoint>
-        </MobileFormFactor>
-      </Host>
-    </Hosts>
+                </mailappor:Icon>
+                <mailappor:Action xsi:type="ShowTaskpane">
+                  <mailappor:SourceLocation resid="taskpaneUrl"/>
+                </mailappor:Action>
+              </mailappor:Control>
+            </mailappor:Group>
+          </mailappor:ExtensionPoint>
+        </mailappor:MobileFormFactor>
 
-    <Resources>
+      </mailappor:Host>
+    </mailappor:Hosts>
+
+    <mailappor:Resources>
       <bt:Urls>
-        <!-- point to your new file -->
-        <bt:Url id="functionFileUrl" DefaultValue="ttps://therepos.github.io/officejs/src/outlook/commands.html"/>
-        <bt:Url id="taskpaneUrl" DefaultValue="ttps://therepos.github.io/officejs/src/outlook/taskpane.html"/>
+        <bt:Url id="functionFileUrl" DefaultValue="https://therepos.github.io/officejs/src/outlook/commands.html"/>
+        <bt:Url id="taskpaneUrl"    DefaultValue="https://therepos.github.io/officejs/src/outlook/taskpane.html"/>
       </bt:Urls>
 
       <bt:ShortStrings>
@@ -105,6 +109,7 @@
         <bt:Image id="icon32" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-32.png"/>
         <bt:Image id="icon80" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
       </bt:Images>
-    </Resources>
-  </VersionOverrides>
+    </mailappor:Resources>
+
+  </mailappor:VersionOverrides>
 </OfficeApp>
