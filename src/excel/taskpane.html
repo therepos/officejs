@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>OfficeJS Tools</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <link rel="stylesheet" href="taskpane.css">
+</head>
+
+<body>
+  <h3>OfficeJS Tools</h3>
+
+  <div class="stack">
+    <button id="btnFont">Set workbook to Arial 8</button>
+    <script>
+      Office.onReady(() => {
+        document.getElementById("btnFont").onclick = setArial8;
+      });
+
+      async function setArial8() {
+        await Excel.run(async (ctx) => {
+          const sheets = ctx.workbook.worksheets;
+          sheets.load("items/name");
+          await ctx.sync();
+
+          sheets.items.forEach((ws) => {
+            // true => search entire sheet if Excel thinks it’s empty
+            const r = ws.getUsedRange(true);
+            r.format.font.name = "Arial";
+            r.format.font.size = 8;
+          });
+
+          await ctx.sync();
+        });
+      }
+    </script>
+
+  <div id="status"></div>
+
+  <!-- Load scripts normally; Office.onReady in ui.js wires handlers -->
+  <script src="features.js" defer></script>
+  <script src="ui.js" defer></script>
+</body>
+
+</html>

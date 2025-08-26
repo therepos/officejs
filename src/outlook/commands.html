@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Commands Host</title>
+    <!-- Load Office.js first -->
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <!-- Load your Outlook features (the same code your taskpane uses is fine) -->
+    <script src="./features.js"></script>
+  </head>
+  <body>
+    <!-- No visible UI needed; this just hosts JS for ribbon commands -->
+    <script>
+      Office.onReady(() => {
+        // If you later add ExecuteFunction commands, associate here:
+        // Office.actions.associate("someActionId", someFunction);
+      });
+    </script>
+  </body>
+</html>

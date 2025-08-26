@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+           xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0"
+           xsi:type="MailApp">
+  <Id>7f1a9b06-1d1c-4f3a-9a6d-6a3c8f2a4b0e</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>therepos</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="OfficeJS Tools"/>
+  <Description DefaultValue="Outlook add-in with formatting tools."/>
+  <IconUrl DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
+  <SupportUrl DefaultValue="https://therepos.github.io/officejs/"/>
+
+  <AppDomains>
+    <AppDomain>https://therepos.github.io</AppDomain>
+  </AppDomains>
+
+  <Requirements>
+    <Sets>
+      <Set Name="Mailbox" MinVersion="1.1"/>
+    </Sets>
+  </Requirements>
+
+  <Hosts><Host Name="Mailbox"/></Hosts>
+  
+  <FormSettings>
+    <Form xsi:type="ItemRead">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="https://therepos.github.io/officejs/src/outlook/blank.html"/>
+        <RequestedHeight>250</RequestedHeight>
+      </DesktopSettings>
+    </Form>
+  </FormSettings>
+
+  <Permissions>ReadWriteItem</Permissions>
+
+  <Rule xsi:type="RuleCollection" Mode="Or">
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
+  </Rule>
+
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1" xsi:type="VersionOverridesV1_1">
+      <Requirements><bt:Sets DefaultMinVersion="1.13"><bt:Set Name="Mailbox"/></bt:Sets></Requirements>
+
+      <Hosts>
+        <Host xsi:type="MailHost">
+          <DesktopFormFactor>
+            <FunctionFile resid="taskPaneUrl"/>
+            <ExtensionPoint xsi:type="MessageComposeCommandSurface">
+              <OfficeTab id="TabDefault">
+                <Group id="grp1">
+                  <Label resid="grpLabel"/>
+                  <Control xsi:type="Button" id="btnOpenPane">
+                    <Label resid="btnLabel"/>
+                    <Supertip><Title resid="btnLabel"/><Description resid="btnDesc"/></Supertip>
+                    <Icon>
+                      <bt:Image size="16" resid="icon16"/>
+                      <bt:Image size="32" resid="icon32"/>
+                      <bt:Image size="80" resid="icon80"/>
+                    </Icon>
+                    <Action xsi:type="ShowTaskpane">
+                      <SourceLocation resid="taskPaneUrl"/>
+                      <SupportsPinning>true</SupportsPinning>
+                    </Action>
+                  </Control>
+                </Group>
+              </OfficeTab>
+            </ExtensionPoint>
+          </DesktopFormFactor>
+        </Host>
+      </Hosts>
+
+      <Resources>
+        <bt:Images>
+          <bt:Image id="icon16" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-16.png"/>
+          <bt:Image id="icon32" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-32.png"/>
+          <bt:Image id="icon80" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-80.png"/>
+        </bt:Images>
+        <bt:Urls>
+          <!-- STABLE url (no version); page self-busts cache when loading JS -->
+          <bt:Url id="taskPaneUrl" DefaultValue="https://therepos.github.io/officejs/src/outlook/taskpane.html"/>
+        </bt:Urls>
+        <bt:ShortStrings>
+          <bt:String id="grpLabel" DefaultValue="Tools"/>
+          <bt:String id="btnLabel" DefaultValue="OfficeJS Tools"/>
+        </bt:ShortStrings>
+        <bt:LongStrings>
+          <bt:String id="btnDesc" DefaultValue="Open the task pane with formatting tools."/>
+        </bt:LongStrings>
+      </Resources>
+    </VersionOverrides>
+  </VersionOverrides>
+</OfficeApp>
