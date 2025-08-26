@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+           xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
+           xsi:type="TaskPaneApp">
+  <Id>6f2c00e9-f179-44f4-8c0a-a630bd238998</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>therepos</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="Excel Tools"/>
+  <Description DefaultValue="Formatting helpers for Excel"/>
+
+  <Hosts><Host Name="Workbook"/></Hosts>
+  <DefaultSettings>
+    <SourceLocation DefaultValue="https://therepos.github.io/officejs/src/excel/taskpane.html"/>
+  </DefaultSettings>
+
+  <Permissions>ReadWriteDocument</Permissions>
+
+  <VersionOverrides xsi:type="ov:VersionOverrides" Version="1.0">
+    <Hosts>
+      <Host xsi:type="Workbook">
+        <DesktopFormFactor>
+          <FunctionFile resid="commandsHtml"/>
+          <ExtensionPoint xsi:type="PrimaryCommandSurface">
+            <CustomTab id="Tab.ExcelTools">
+              <Label resid="tabLabel"/>
+              <Group id="Grp.ExcelTools">
+                <Label resid="grpLabel"/>
+                <Control xsi:type="Button" id="Btn.Arial8">
+                  <Label resid="btnArial8Label"/>
+                  <Supertip>
+                    <Title resid="btnArial8Label"/>
+                    <Description resid="btnArial8Desc"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="icon16"/>
+                    <bt:Image size="32" resid="icon32"/>
+                  </Icon>
+                  <Action xsi:type="ExecuteFunction">
+                    <FunctionName>setWorkbookArial8</FunctionName>
+                  </Action>
+                </Control>
+                <Control xsi:type="Button" id="Btn.GridOff">
+                  <Label resid="btnGridOffLabel"/>
+                  <Supertip>
+                    <Title resid="btnGridOffLabel"/>
+                    <Description resid="btnGridOffDesc"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="icon16"/>
+                    <bt:Image size="32" resid="icon32"/>
+                  </Icon>
+                  <Action xsi:type="ExecuteFunction">
+                    <FunctionName>hideGridlinesAll</FunctionName>
+                  </Action>
+                </Control>
+              </Group>
+            </CustomTab>
+          </ExtensionPoint>
+          <!-- Taskpane button on the Home tab (optional) -->
+          <ExtensionPoint xsi:type="TaskpaneButton">
+            <OfficeTab id="TabHome">
+              <Group id="Grp.ExcelPane">
+                <Label resid="grpLabel"/>
+                <Control xsi:type="Button" id="Btn.OpenPane">
+                  <Label resid="openPaneLabel"/>
+                  <Icon>
+                    <bt:Image size="16" resid="icon16"/>
+                    <bt:Image size="32" resid="icon32"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="taskpaneHtml"/>
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+
+    <Resources>
+      <bt:Urls>
+        <bt:Url id="commandsHtml" DefaultValue="https://therepos.github.io/officejs/src/excel/commands.html"/>
+        <bt:Url id="taskpaneHtml"  DefaultValue="https://therepos.github.io/officejs/src/excel/taskpane.html"/>
+      </bt:Urls>
+      <bt:Images>
+        <bt:Image id="icon16" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-16.png"/>
+        <bt:Image id="icon32" DefaultValue="https://therepos.github.io/officejs/assets/outlook/icon-32.png"/>
+      </bt:Images>
+      <bt:ShortStrings>
+        <bt:String id="tabLabel" DefaultValue="Excel Tools"/>
+        <bt:String id="grpLabel" DefaultValue="Formatting"/>
+        <bt:String id="btnArial8Label" DefaultValue="Arial 8"/>
+        <bt:String id="btnGridOffLabel" DefaultValue="Hide Gridlines"/>
+        <bt:String id="openPaneLabel" DefaultValue="Open Tools"/>
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="btnArial8Desc" DefaultValue="Set all text in the workbook to Arial size 8."/>
+        <bt:String id="btnGridOffDesc" DefaultValue="Hide worksheet gridlines on all sheets."/>
+      </bt:LongStrings>
+    </Resources>
+  </VersionOverrides>
+</OfficeApp>
