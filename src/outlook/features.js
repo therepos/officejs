@@ -46,41 +46,47 @@ async function formatTables() {
 
 async function resizeImages60() {
   status("Resizing selected image to 60%…");
-
   Office.context.mailbox.item.getSelectedDataAsync(
     Office.CoercionType.Html,
     async (res) => {
-      let sel = res?.value?.data || "";
-      if (!sel.trim()) {
-        status("Select an image first.");
-        return;
-      }
+      const htmlSel = (res?.value?.data || "").trim();
+      if (!htmlSel) { status("Tip: select the image (or its paragraph) and retry."); return; }
 
-      const div = document.createElement("div");
-      div.innerHTML = sel;
-      const img = div.querySelector("img");
+      const wrap = document.createElement("div");
+      wrap.innerHTML = htmlSel;
+      const img = wrap.querySelector("img");
+      if (!img) { status("Selection contains no image."); return; }
 
-      if (!img) {
-        status("No image selected.");
-        return;
-      }
+      const pxFrom = (style, prop) => {
+        const m = new RegExp(`(?:^|;)\\s*${prop}\\s*:\\s*(\\d+(?:\\.\\d+)?)px`, "i").exec(style || "");
+        return m ? parseFloat(m[1]) : 0;
+      };
 
-      // Reset to original dimensions
-      const ow = img.naturalWidth || img.width || parseInt(img.getAttribute("width"), 10);
-      const oh = img.naturalHeight || img.height || parseInt(img.getAttribute("height"), 10);
-
+      // Determine original size (prefer stored attrs; else infer like your global resizer does)
+      let ow = parseInt(img.getAttribute("data-orig-width"), 10) || 0;
+      let oh = parseInt(img.getAttribute("data-orig-height"), 10) || 0;
       if (!ow || !oh) {
-        status("Could not determine original size.");
-        return;
+        if (img.naturalWidth && img.naturalHeight) { ow = img.naturalWidth; oh = img.naturalHeight; }
+        else if (img.width && img.height) { ow = img.width; oh = img.height; }
+        else {
+          const st = img.getAttribute("style") || "";
+          const sw = pxFrom(st, "width"), sh = pxFrom(st, "height");
+          const aw = parseInt(img.getAttribute("width"), 10) || 0;
+          const ah = parseInt(img.getAttribute("height"), 10) || 0;
+          ow = sw || aw || 0; oh = sh || ah || 0;
+        }
+        if (ow && oh) { img.setAttribute("data-orig-width", ow); img.setAttribute("data-orig-height", oh); } // remember
       }
 
+      if (!ow || !oh) { status("Couldn't determine original size."); return; }
+
+      // Reset → scale to 60%
       img.style.width = Math.round(ow * 0.6) + "px";
       img.style.height = Math.round(oh * 0.6) + "px";
       img.style.maxWidth = "100%";
 
-      // Replace selection with resized image
       Office.context.mailbox.item.setSelectedDataAsync(
-        img.outerHTML,
+        wrap.innerHTML,
         { coercionType: Office.CoercionType.Html },
         () => status("Image resized to 60% ✓")
       );
