@@ -45,50 +45,62 @@ async function formatTables() {
 }
 
 async function resizeImages60() {
-  status("Resizing selected image to 60%…");
-  Office.context.mailbox.item.getSelectedDataAsync(
+// Requires: Office.js; Compose mode
+// 1) Get the selected HTML (should be an <img>)
+  Office.context.mailbox.item.body.getSelectedDataAsync(
     Office.CoercionType.Html,
     async (res) => {
-      const htmlSel = (res?.value?.data || "").trim();
-      if (!htmlSel) { status("Tip: select the image (or its paragraph) and retry."); return; }
+      if (res.status !== Office.AsyncResultStatus.Succeeded) return;
+      const html = (res.value || "").trim();
+      const imgMatch = html.match(/<img\b[^>]*>/i);
+      if (!imgMatch) return;
 
-      const wrap = document.createElement("div");
-      wrap.innerHTML = htmlSel;
-      const img = wrap.querySelector("img");
-      if (!img) { status("Selection contains no image."); return; }
+      const tag = imgMatch[0];
 
-      const pxFrom = (style, prop) => {
-        const m = new RegExp(`(?:^|;)\\s*${prop}\\s*:\\s*(\\d+(?:\\.\\d+)?)px`, "i").exec(style || "");
-        return m ? parseFloat(m[1]) : 0;
-      };
+      // Extract src
+      const srcMatch = tag.match(/\bsrc=(["'])(.*?)\1/i);
+      if (!srcMatch) return;
+      const src = srcMatch[2];
 
-      // Determine original size (prefer stored attrs; else infer like your global resizer does)
-      let ow = parseInt(img.getAttribute("data-orig-width"), 10) || 0;
-      let oh = parseInt(img.getAttribute("data-orig-height"), 10) || 0;
-      if (!ow || !oh) {
-        if (img.naturalWidth && img.naturalHeight) { ow = img.naturalWidth; oh = img.naturalHeight; }
-        else if (img.width && img.height) { ow = img.width; oh = img.height; }
-        else {
-          const st = img.getAttribute("style") || "";
-          const sw = pxFrom(st, "width"), sh = pxFrom(st, "height");
-          const aw = parseInt(img.getAttribute("width"), 10) || 0;
-          const ah = parseInt(img.getAttribute("height"), 10) || 0;
-          ow = sw || aw || 0; oh = sh || ah || 0;
-        }
-        if (ow && oh) { img.setAttribute("data-orig-width", ow); img.setAttribute("data-orig-height", oh); } // remember
-      }
+      // 2) Load the image in the add-in to read its natural size
+      const probe = new Image();
+      // (crossOrigin helps some remote images; safe to try)
+      try { probe.crossOrigin = "anonymous"; } catch {}
+      const natural = await new Promise<{w:number;h:number}>((resolve, reject) => {
+        probe.onload = () => resolve({ w: probe.naturalWidth, h: probe.naturalHeight });
+        probe.onerror = reject;
+        probe.src = src;
+      }).catch(() => null as any);
+      if (!natural || !natural.w || !natural.h) return;
 
-      if (!ow || !oh) { status("Couldn't determine original size."); return; }
+      // 3) Build a clean <img> (reset to original) then scale to 60%
+      const w = Math.round(natural.w * 0.6);
+      const h = Math.round(natural.h * 0.6);
 
-      // Reset → scale to 60%
-      img.style.width = Math.round(ow * 0.6) + "px";
-      img.style.height = Math.round(oh * 0.6) + "px";
-      img.style.maxWidth = "100%";
+      // Keep all original non-size attributes (alt, class, etc.), but strip width/height/style sizing
+      const cleaned = tag
+        // remove width/height attrs
+        .replace(/\swidth\s*=\s*["'][^"']*["']/ig, "")
+        .replace(/\sheight\s*=\s*["'][^"']*["']/ig, "")
+        // remove inline size styles (width/height/transform/zoom)
+        .replace(/\sstyle\s*=\s*["'][^"']*["']/ig, (m) => {
+          const val = m.slice(m.indexOf("=") + 1).replace(/^["']|["']$/g, "");
+          const filtered = val
+            .split(";")
+            .map(s => s.trim())
+            .filter(s => s && !/^width\s*:|^height\s*:|^transform\s*:|^zoom\s*:/.test(s.toLowerCase()))
+            .join("; ");
+          return filtered ? ` style="${filtered}"` : "";
+        });
 
-      Office.context.mailbox.item.setSelectedDataAsync(
-        wrap.innerHTML,
+      // New tag: intrinsic reset (no size attrs), then explicit 60% px size
+      const newImg = cleaned.replace(/<img\b/i, `<img width="${w}" height="${h}"`);
+
+      // 4) Replace selection with resized image
+      Office.context.mailbox.item.body.setSelectedDataAsync(
+        newImg,
         { coercionType: Office.CoercionType.Html },
-        () => status("Image resized to 60% ✓")
+        () => {/* no-op */}
       );
     }
   );
