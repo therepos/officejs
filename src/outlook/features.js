@@ -48,49 +48,64 @@ async function formatTables() {
 async function resizeImages60() {
   status("Resizing selected image…");
 
-  Office.context.mailbox.item.getSelectedDataAsync(
-    Office.CoercionType.Html,
-    async (res) => {
-      if (res.status !== Office.AsyncResultStatus.Succeeded) {
-        status("Failed to get selection.");
-        return;
-      }
-
-      const html = res.value?.data || "";
-      if (!html.trim()) {
-        status("Select an image first.");
-        return;
-      }
-
-      const div = wrapDiv(html);
-      const img = div.querySelector("img");
-
-      if (!img) {
-        status("Selected content is not an image.");
-        return;
-      }
-
-      // Reset and scale
-      img.removeAttribute("width");
-      img.removeAttribute("height");
-      img.style.width = "";
-      img.style.height = "";
-      img.style.transform = "scale(0.6)";
-      img.style.transformOrigin = "top left";
-
-      Office.context.mailbox.item.setSelectedDataAsync(
-        div.innerHTML,
-        { coercionType: Office.CoercionType.Html },
-        (result) => {
-          if (result.status === Office.AsyncResultStatus.Succeeded) {
-            status("Selected image resized ✓");
-          } else {
-            status("Failed to update image.");
-          }
+  // Step 1: Get selected HTML
+  const selectedHtml = await new Promise((resolve, reject) => {
+    Office.context.mailbox.item.getSelectedDataAsync(
+      Office.CoercionType.Html,
+      (res) => {
+        if (res.status === Office.AsyncResultStatus.Succeeded) {
+          resolve(res.value?.data || "");
+        } else {
+          reject("Failed to get selection.");
         }
-      );
-    }
+      }
+    );
+  });
+
+  if (!selectedHtml.trim()) {
+    status("Select an image first.");
+    return;
+  }
+
+  const selectedDiv = wrapDiv(selectedHtml);
+  const selectedImg = selectedDiv.querySelector("img");
+
+  if (!selectedImg) {
+    status("Selected content is not an image.");
+    return;
+  }
+
+  const selectedSrc = selectedImg.getAttribute("src");
+  if (!selectedSrc) {
+    status("Could not identify selected image.");
+    return;
+  }
+
+  // Step 2: Get full body HTML
+  const fullHtml = await getHtml();
+  const fullDiv = wrapDiv(fullHtml);
+
+  // Step 3: Find matching image in full body
+  const matchingImg = Array.from(fullDiv.querySelectorAll("img")).find(
+    (img) => img.getAttribute("src") === selectedSrc
   );
+
+  if (!matchingImg) {
+    status("Could not find selected image in body.");
+    return;
+  }
+
+  // Step 4: Reset and scale
+  matchingImg.removeAttribute("width");
+  matchingImg.removeAttribute("height");
+  matchingImg.style.width = "";
+  matchingImg.style.height = "";
+  matchingImg.style.transform = "scale(0.6)";
+  matchingImg.style.transformOrigin = "top left";
+
+  // Step 5: Write back full HTML
+  await setHtml(fullDiv.innerHTML);
+  status("Selected image resized ✓");
 }
 
 async function setWholeBodyFont(family, sizePt) {
