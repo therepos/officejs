@@ -44,63 +44,66 @@ async function formatTables() {
   status("Tables formatted ✓");
 }
 
+// Compose only
 async function resizeImages60() {
-// Requires: Office.js; Compose mode
-// 1) Get the selected HTML (should be an <img>)
   Office.context.mailbox.item.body.getSelectedDataAsync(
     Office.CoercionType.Html,
     async (res) => {
       if (res.status !== Office.AsyncResultStatus.Succeeded) return;
+
       const html = (res.value || "").trim();
-      const imgMatch = html.match(/<img\b[^>]*>/i);
-      if (!imgMatch) return;
+      if (!html) return;
 
-      const tag = imgMatch[0];
+      // Parse robustly (avoid regex-only parsing)
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
 
-      // Extract src
-      const srcMatch = tag.match(/\bsrc=(["'])(.*?)\1/i);
-      if (!srcMatch) return;
-      const src = srcMatch[2];
+      // Handle cases like <a><img/></a> or plain <img/>
+      const imgs = Array.from(doc.querySelectorAll("img"));
+      if (!imgs.length) return;
 
-      // 2) Load the image in the add-in to read its natural size
-      const probe = new Image();
-      // (crossOrigin helps some remote images; safe to try)
-      try { probe.crossOrigin = "anonymous"; } catch {}
-      const natural = await new Promise<{w:number;h:number}>((resolve, reject) => {
-        probe.onload = () => resolve({ w: probe.naturalWidth, h: probe.naturalHeight });
-        probe.onerror = reject;
-        probe.src = src;
-      }).catch(() => null as any);
-      if (!natural || !natural.w || !natural.h) return;
+      // Probe all images (parallel)
+      const probed = await Promise.all(
+        imgs.map(async (img) => {
+          const src = img.getAttribute("src") || "";
+          // Can't probe cid: sources from add-in domain
+          if (!src || src.startsWith("cid:")) return { img, w: 0, h: 0 };
 
-      // 3) Build a clean <img> (reset to original) then scale to 60%
-      const w = Math.round(natural.w * 0.6);
-      const h = Math.round(natural.h * 0.6);
+          const probe = new Image();
+          try { probe.crossOrigin = "anonymous"; } catch {}
+          const size = await new Promise<{ w: number; h: number }>((resolve) => {
+            probe.onload = () => resolve({ w: probe.naturalWidth, h: probe.naturalHeight });
+            probe.onerror = () => resolve({ w: 0, h: 0 });
+            probe.src = src;
+          });
+          return { img, ...size };
+        })
+      );
 
-      // Keep all original non-size attributes (alt, class, etc.), but strip width/height/style sizing
-      const cleaned = tag
-        // remove width/height attrs
-        .replace(/\swidth\s*=\s*["'][^"']*["']/ig, "")
-        .replace(/\sheight\s*=\s*["'][^"']*["']/ig, "")
-        // remove inline size styles (width/height/transform/zoom)
-        .replace(/\sstyle\s*=\s*["'][^"']*["']/ig, (m) => {
-          const val = m.slice(m.indexOf("=") + 1).replace(/^["']|["']$/g, "");
-          const filtered = val
-            .split(";")
-            .map(s => s.trim())
-            .filter(s => s && !/^width\s*:|^height\s*:|^transform\s*:|^zoom\s*:/.test(s.toLowerCase()))
-            .join("; ");
-          return filtered ? ` style="${filtered}"` : "";
-        });
+      // Mutate DOM: reset & set to 60% where we know natural size
+      probed.forEach(({ img, w, h }) => {
+        // Strip explicit sizing (attrs + inline style)
+        img.removeAttribute("width");
+        img.removeAttribute("height");
+        const style = (img.getAttribute("style") || "")
+          .split(";")
+          .map(s => s.trim())
+          .filter(s => s && !/^(width|height|transform|zoom)\s*:/i.test(s))
+          .join("; ");
+        style ? img.setAttribute("style", style) : img.removeAttribute("style");
 
-      // New tag: intrinsic reset (no size attrs), then explicit 60% px size
-      const newImg = cleaned.replace(/<img\b/i, `<img width="${w}" height="${h}"`);
+        if (w > 0 && h > 0) {
+          img.setAttribute("width", String(Math.round(w * 0.6)));
+          img.setAttribute("height", String(Math.round(h * 0.6)));
+        }
+        // else: we leave it intrinsic (best effort for cid:/blocked sources)
+      });
 
-      // 4) Replace selection with resized image
+      // Replace selection with updated HTML
       Office.context.mailbox.item.body.setSelectedDataAsync(
-        newImg,
+        doc.body.innerHTML,
         { coercionType: Office.CoercionType.Html },
-        () => {/* no-op */}
+        () => {}
       );
     }
   );
