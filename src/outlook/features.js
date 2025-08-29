@@ -71,7 +71,7 @@ async function resizeImages60() {
 
           const probe = new Image();
           try { probe.crossOrigin = "anonymous"; } catch {}
-          const size = await new Promise<{ w: number; h: number }>((resolve) => {
+          const size = await new Promise<{ w: number, h: number }>((resolve) => {
             probe.onload = () => resolve({ w: probe.naturalWidth, h: probe.naturalHeight });
             probe.onerror = () => resolve({ w: 0, h: 0 });
             probe.src = src;
