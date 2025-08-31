@@ -19,10 +19,7 @@ officejs/
 │   └── shared/
 │       └── utils.js
 ├── assets/
-│   └── outlook/
-│       ├── icon-16.png
-│       ├── icon-32.png
-│       └── icon-80.png
+│   └── outlook/              ← images
 └── README.md
 
 ```
