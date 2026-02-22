@@ -1,11 +1,11 @@
-# OfficeJS Add-in
----
-## How to Use
+## Usage
+
 1. Download `manifest.xml`
 2. In Outlook web/PWA: **Add-ins → Get Add-ins → My add-ins → Custom add-ins → Upload**  → `manifest.xml`.
 35. Compose a message: **Add-ins → OfficeJS Tools** on the ribbon.
 
 ## Structure
+
 ```
 officejs/
 ├── manifest.xml
@@ -25,8 +25,10 @@ officejs/
 ```
 
 ## Notes
+
 - Manifest uses absolute HTTPS URLs pointing at `https://<username>.github.io/officejs/...`.
 - Add more buttons by creating new functions in taskpane.js.
 
 ## Resources
+
 - [Office Add-ins with the add-in only manifest](https://learn.microsoft.com/en-us/office/dev/add-ins/develop/xml-manifest-overview?tabs=tabid-1)
